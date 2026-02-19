@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/EOC_V1_ROADMAP</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/EOC_V1_ROADMAP</h1>
+</header>
+<h1 id="eoc-v1-implementation-roadmap">EOC v1 Implementation
+Roadmap</h1>
+<p>Status: Proposed<br />
+Last updated: 2026-02-19</p>
+<p>Related documents:</p>
+<ul>
+<li><code>docs/PHASE1_SPEC.md</code> (framework-level Phase 1
+architecture/specification)</li>
+<li><code>docs/ARLEN_CLI_SPEC.md</code> (Phase 1 CLI contract for
+<code>arlen</code>)</li>
+<li><code>docs/LITE_MODE_SPEC.md</code> (Phase 1 lite-mode behavior and
+boundaries)</li>
+<li><code>docs/PHASE2_ROADMAP.md</code> (Phase 2 hardening milestones,
+including performance-gap closure)</li>
+<li><code>docs/PHASE3_ROADMAP.md</code> (Phase 3 trend analysis and
+expanded performance maturity work)</li>
+<li><code>V1_SPEC.md</code> (EOC template engine v1 details)</li>
+</ul>
+<h2 id="implementation-status-2026-02-18">Implementation Status
+(2026-02-18)</h2>
+<ul>
+<li>Completed: Phase 2 runtime support scaffolding
+(<code>ALNEOCRuntime</code>).</li>
+<li>Completed: Phase 3 <code>eocc</code> transpiler CLI with
+state-machine parser and <code>#line</code> output.</li>
+<li>Completed: Phase 4 registry source generation
+(<code>EOCRegistry.m</code> output from <code>eocc</code>).</li>
+<li>Completed: Phase 5 initial GNUstep build integration via root
+<code>GNUmakefile</code> targets.</li>
+<li>Completed: Phase 6 unit-test baseline with XCTest
+(<code>make test</code>).</li>
+<li>Completed: initial basic-app capability checks
+(<code>eoc-smoke-render</code>, <code>boomhauer</code>,
+<code>bin/smoke</code>).</li>
+<li>In progress: deeper fixture coverage, richer routing/controller
+layers, and integration-level MVC examples.</li>
+</ul>
+<h2 id="cross-cutting-rollout-alignment-2026-02-19">Cross-Cutting
+Rollout Alignment (2026-02-19)</h2>
+<ul>
+<li>Performance-priority work that affects EOC render paths is planned
+in framework Phase 2/3 roadmaps.</li>
+<li>Phase 2C/2D define mandatory runtime timing coverage and CI
+perf-gate hardening.</li>
+<li>Phase 3C expands trend analysis and workload profile coverage for
+sustained performance governance.</li>
+</ul>
+<h2 id="goal">Goal</h2>
+<p>Deliver a working <code>.html.eoc</code> template system for
+GNUstep/Objective-C that compiles templates into Objective-C source and
+integrates with <code>gnustep-make</code>.</p>
+<h2 id="guiding-principles">Guiding Principles</h2>
+<ul>
+<li>Prioritize deterministic behavior and clear diagnostics.</li>
+<li>Keep v1 focused on compile-time template generation.</li>
+<li>Maintain a path toward a full Mojolicious-style MVC stack.</li>
+</ul>
+<h2 id="phase-plan">Phase Plan</h2>
+<h2 id="phase-1-freeze-v1-contract">Phase 1: Freeze v1 Contract</h2>
+<p>Target: 0.5 day</p>
+<p>Deliverables:</p>
+<ul>
+<li>Finalize syntax and semantics in <code>V1_SPEC.md</code>:
+<ul>
+<li><code>&lt;% code %&gt;</code></li>
+<li><code>&lt;%= expr %&gt;</code> (HTML-escaped)</li>
+<li><code>&lt;%== expr %&gt;</code> (raw)</li>
+<li><code>&lt;%# comment %&gt;</code></li>
+</ul></li>
+<li>Confirm naming/path conventions for:
+<ul>
+<li><code>templates/**/*.html.eoc</code></li>
+<li>generated <code>build/gen/templates/**/*.eoc.m</code></li>
+<li>symbol prefix <code>ALNEOCRender_...</code></li>
+</ul></li>
+<li>Lock parse error shape (file, line, column, reason).</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>No open ambiguity in parser/transpiler behavior for v1.</li>
+</ul>
+<h2 id="phase-2-runtime-support-layer">Phase 2: Runtime Support
+Layer</h2>
+<p>Target: 1 day</p>
+<p>Location: <code>src/Arlen/MVC/Template/</code></p>
+<p>Deliverables:</p>
+<ul>
+<li>Core runtime APIs:
+<ul>
+<li><code>ALNEOCEscapeHTML(...)</code></li>
+<li>safe append helpers</li>
+<li><code>ALNEOCInclude(...)</code></li>
+</ul></li>
+<li>Template dispatch/lookup contract for include rendering.</li>
+<li>Clear error propagation via <code>NSError **</code>.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Runtime helpers compile and pass basic unit tests.</li>
+</ul>
+<h2 id="phase-3-eocc-transpiler-cli">Phase 3: <code>eocc</code>
+Transpiler CLI</h2>
+<p>Target: 2 days</p>
+<p>Location: <code>tools/</code></p>
+<p>Deliverables:</p>
+<ul>
+<li><code>eocc</code> command-line tool that:
+<ul>
+<li>scans template input paths</li>
+<li>parses <code>.html.eoc</code> with a state machine</li>
+<li>emits deterministic <code>.eoc.m</code> files</li>
+<li>emits <code>#line</code> directives for diagnostic mapping</li>
+</ul></li>
+<li>Parser supports multiline code and expressions.</li>
+<li>Deterministic symbol/path sanitization.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Valid fixtures transpile cleanly and invalid fixtures fail with
+accurate diagnostics.</li>
+</ul>
+<h2 id="phase-4-generated-registry--include-dispatch">Phase 4: Generated
+Registry + Include Dispatch</h2>
+<p>Target: 1 day</p>
+<p>Deliverables:</p>
+<ul>
+<li>Generate registry source (for example <code>EOCRegistry.m</code>)
+mapping:
+<ul>
+<li>logical template path -&gt; render function pointer</li>
+</ul></li>
+<li><code>ALNEOCInclude(...)</code> resolves includes through
+registry.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Partials render correctly through registry-based dispatch.</li>
+</ul>
+<h2 id="phase-5-gnustep-make-integration">Phase 5:
+<code>gnustep-make</code> Integration</h2>
+<p>Target: 1 day</p>
+<p>Deliverables:</p>
+<ul>
+<li>Prebuild step to:
+<ul>
+<li>discover <code>templates/**/*.html.eoc</code></li>
+<li>run <code>eocc</code></li>
+<li>compile generated sources</li>
+</ul></li>
+<li>Build fails fast on transpiler errors.</li>
+<li>Generated output remains untracked in Git.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Single <code>make</code> command handles transpile + compile
+end-to-end.</li>
+</ul>
+<h2 id="phase-6-tests-and-fixtures">Phase 6: Tests and Fixtures</h2>
+<p>Target: 2 days</p>
+<p>Locations:</p>
+<ul>
+<li><code>tests/unit/</code></li>
+<li><code>tests/integration/</code></li>
+<li><code>tests/fixtures/templates/</code></li>
+</ul>
+<p>Deliverables:</p>
+<ul>
+<li>Fixture-driven parser/transpiler tests:
+<ul>
+<li>control flow</li>
+<li>escaped output</li>
+<li>raw output</li>
+<li>comments</li>
+<li>multiline tags</li>
+<li>unclosed/malformed tag errors</li>
+</ul></li>
+<li>Runtime tests for include behavior and escaping.</li>
+<li>Integration tests for full render path.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Core parser/runtime behavior covered by automated tests.</li>
+</ul>
+<h2 id="phase-7-example-app">Phase 7: Example App</h2>
+<p>Target: 1 day</p>
+<p>Location: <code>examples/basic_app/</code></p>
+<p>Deliverables:</p>
+<ul>
+<li>Minimal MVC-style example that demonstrates:
+<ul>
+<li>context object</li>
+<li>partial include</li>
+<li>page template rendering</li>
+<li>compiled <code>.html.eoc</code> output path</li>
+</ul></li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>Example app renders dynamic HTML successfully.</li>
+</ul>
+<h2 id="phase-8-hardening-and-release-readiness">Phase 8: Hardening and
+Release Readiness</h2>
+<p>Target: 1 day</p>
+<p>Deliverables:</p>
+<ul>
+<li>Improve diagnostics and edge-case handling.</li>
+<li>Document <code>eocc</code> usage and expected build
+integration.</li>
+<li>Validate <code>.gitignore</code> coverage for generated
+artifacts.</li>
+<li>Confirm v1 acceptance criteria from <code>V1_SPEC.md</code>.</li>
+</ul>
+<p>Exit criteria:</p>
+<ul>
+<li>v1 is stable for early adopters and internal expansion.</li>
+</ul>
+<h2 id="architecture-recommendations">Architecture Recommendations</h2>
+<ul>
+<li>Implement <code>eocc</code> as an Objective-C CLI tool for
+single-language consistency.</li>
+<li>Keep templates trusted in v1 (no sandbox/untrusted execution
+model).</li>
+<li>Use composite template extensions (<code>.html.eoc</code>, future
+<code>.json.eoc</code>, <code>.txt.eoc</code>).</li>
+</ul>
+<h2 id="definition-of-done-v1">Definition of Done (v1)</h2>
+<ul>
+<li>Templates compile automatically during build.</li>
+<li>Escaped/raw output semantics are correct.</li>
+<li>Includes are functional and deterministic.</li>
+<li>Errors map back to original <code>.html.eoc</code> lines.</li>
+<li>Unit/integration tests pass.</li>
+<li>Example app demonstrates end-to-end workflow.</li>
+</ul>
+<h2 id="suggested-immediate-next-steps">Suggested Immediate Next
+Steps</h2>
+<ol type="1">
+<li>Implement runtime helper interfaces in
+<code>src/Arlen/MVC/Template/</code>.</li>
+<li>Create first <code>eocc</code> parser/transpiler prototype in
+<code>tools/</code>.</li>
+<li>Add initial fixtures under <code>tests/fixtures/templates/</code> to
+drive development.</li>
+</ol>
+</main></body>
+</html>

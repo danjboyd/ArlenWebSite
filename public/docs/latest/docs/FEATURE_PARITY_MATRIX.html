@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/FEATURE_PARITY_MATRIX</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/FEATURE_PARITY_MATRIX</h1>
+</header>
+<h1 id="arlen-feature-parity-matrix">Arlen Feature Parity Matrix</h1>
+<p>Status: Active baseline<br />
+Last updated: 2026-02-19</p>
+<p>Related docs:</p>
+<ul>
+<li><code>docs/PHASE2_ROADMAP.md</code></li>
+<li><code>docs/PHASE3_ROADMAP.md</code></li>
+<li><code>docs/DEPLOYMENT.md</code></li>
+<li><code>docs/PHASE1_SPEC.md</code></li>
+</ul>
+<h2 id="1-baseline-and-parity-model">1. Baseline and Parity Model</h2>
+<ul>
+<li>Mojolicious baseline version: <code>9.42</code>.</li>
+<li>Baseline freeze date: <code>2026-02-19</code>.</li>
+<li>Review cadence: quarterly parity delta review against upstream
+Mojolicious.</li>
+<li>Parity definition: behavior/capability parity for in-scope features,
+not syntax-level mirroring.</li>
+<li>API style: Cocoa/GNUstep-first APIs, reusing Mojolicious terminology
+when it improves clarity.</li>
+</ul>
+<h2 id="2-scope-buckets">2. Scope Buckets</h2>
+<ul>
+<li>In Scope: required for Arlen core roadmap and release planning.</li>
+<li>Deferred: desired for parity/maturity but intentionally scheduled
+after current core milestones.</li>
+<li>Out of Scope: intentionally excluded from Arlen core; may be
+plugin/ecosystem concerns later.</li>
+</ul>
+<h2 id="3-cocoa-forward-design-pillars">3. Cocoa-Forward Design
+Pillars</h2>
+<ul>
+<li><code>NSError **</code> subsystem contracts with consistent error
+domains and metadata.</li>
+<li>Foundation-native request/response/config/data abstractions.</li>
+<li>Deterministic build and runtime behavior across developer and CI
+environments.</li>
+<li>Protocol/class extension points instead of Perl-specific
+metaprogramming patterns.</li>
+</ul>
+<h2 id="4-mojolicious-capability-classification">4. Mojolicious
+Capability Classification</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Capability</th>
+<th>Bucket</th>
+<th>Target Phase</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Routing (methods, placeholders, wildcards, named routes, URL
+generation)</td>
+<td>In Scope</td>
+<td>Phase 1-2 hardening</td>
+<td>Baseline exists; continue edge-case hardening.</td>
+</tr>
+<tr class="even">
+<td>Nested routes, route guards (<code>under</code>-style), route
+conditions</td>
+<td>In Scope</td>
+<td>Phase 2D</td>
+<td>Needed for large app composition and policy gates.</td>
+</tr>
+<tr class="odd">
+<td>Controller/action dispatch model</td>
+<td>In Scope</td>
+<td>Phase 1 (complete)</td>
+<td>Keep Cocoa method contracts explicit.</td>
+</tr>
+<tr class="even">
+<td>Template rendering, layouts, partials, helpers</td>
+<td>In Scope</td>
+<td>Phase 1-2D</td>
+<td>EOC foundation exists; expand helper/layout ergonomics.</td>
+</tr>
+<tr class="odd">
+<td>Content negotiation and format handling</td>
+<td>In Scope</td>
+<td>Phase 2D</td>
+<td>Needed for mixed HTML/JSON workloads.</td>
+</tr>
+<tr class="even">
+<td>Sessions/cookies</td>
+<td>In Scope</td>
+<td>Phase 2B (complete)</td>
+<td>Already delivered; keep regression coverage.</td>
+</tr>
+<tr class="odd">
+<td>Request/parameter validation</td>
+<td>In Scope</td>
+<td>Phase 2C</td>
+<td>Primary 2C deliverable.</td>
+</tr>
+<tr class="even">
+<td>Hooks and plugin extension system</td>
+<td>In Scope</td>
+<td>Phase 3A</td>
+<td>Needed for ecosystem growth.</td>
+</tr>
+<tr class="odd">
+<td>Static file serving</td>
+<td>In Scope</td>
+<td>Phase 1-2 hardening</td>
+<td>Keep baseline, preserve proxy-first production model.</td>
+</tr>
+<tr class="even">
+<td>CLI commands and app scaffolding</td>
+<td>In Scope</td>
+<td>Phase 2D-3C</td>
+<td>Strengthen default-first developer workflows.</td>
+</tr>
+<tr class="odd">
+<td>Dev server auto-reload (<code>morbo</code> analog)</td>
+<td>In Scope</td>
+<td>Phase 2C</td>
+<td>Must remain running on compile/transpile failures.</td>
+</tr>
+<tr class="even">
+<td>Rich dev exception pages + production-safe errors</td>
+<td>In Scope</td>
+<td>Phase 2C</td>
+<td>Includes structured errors with correlation IDs.</td>
+</tr>
+<tr class="odd">
+<td>Testing ergonomics for HTTP/JSON/DOM flows</td>
+<td>In Scope</td>
+<td>Phase 2D-3A</td>
+<td>Behavior parity benchmarked vs in-scope Mojolicious cases.</td>
+</tr>
+<tr class="even">
+<td>WebSocket support</td>
+<td>Deferred</td>
+<td>Phase 3D</td>
+<td>Important parity item; not a Phase 2 blocker.</td>
+</tr>
+<tr class="odd">
+<td>SSE support</td>
+<td>Deferred</td>
+<td>Phase 3D</td>
+<td>Implement after Phase 2C/2D stability work.</td>
+</tr>
+<tr class="even">
+<td>App mounting/embedding patterns</td>
+<td>Deferred</td>
+<td>Phase 3D</td>
+<td>Valuable for modular deployments, not first-wave.</td>
+</tr>
+<tr class="odd">
+<td>CGI/PSGI compatibility modes</td>
+<td>Out of Scope</td>
+<td>N/A</td>
+<td>Not aligned with Cocoa/GNUstep compiled deployment model.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-competitor-inspired-capability-classification">5.
+Competitor-Inspired Capability Classification</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Capability</th>
+<th>Source Inspiration</th>
+<th>Bucket</th>
+<th>Target Phase</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Convention-heavy generators/scaffolds</td>
+<td>Rails, Phoenix</td>
+<td>In Scope</td>
+<td>Phase 2D-3C</td>
+<td>Adoption and onboarding multiplier.</td>
+</tr>
+<tr class="even">
+<td>API-only mode ergonomics</td>
+<td>Rails, FastAPI</td>
+<td>In Scope</td>
+<td>Phase 2D</td>
+<td>Optimize JSON/API-first application defaults.</td>
+</tr>
+<tr class="odd">
+<td>Contract-driven validation helpers</td>
+<td>FastAPI</td>
+<td>In Scope</td>
+<td>Phase 2C</td>
+<td>Unified coercion + predictable 4xx error contracts.</td>
+</tr>
+<tr class="even">
+<td>OpenAPI generation and API docs integration</td>
+<td>FastAPI</td>
+<td>In Scope</td>
+<td>Phase 3A</td>
+<td>Improves API discoverability and tooling fit.</td>
+</tr>
+<tr class="odd">
+<td>Service dependency/lifecycle ergonomics</td>
+<td>FastAPI, Phoenix</td>
+<td>In Scope</td>
+<td>Phase 3A</td>
+<td>Explicit startup/shutdown and dependency wiring.</td>
+</tr>
+<tr class="even">
+<td>Metrics and telemetry primitives</td>
+<td>Phoenix</td>
+<td>In Scope</td>
+<td>Phase 3A</td>
+<td>First-class observability posture.</td>
+</tr>
+<tr class="odd">
+<td>Release packaging with <code>server</code>/<code>migrate</code>
+workflow</td>
+<td>Phoenix</td>
+<td>In Scope</td>
+<td>Phase 2D-3C</td>
+<td>Core compiled-framework deployment contract.</td>
+</tr>
+<tr class="even">
+<td>Realtime channels/pubsub abstraction</td>
+<td>Phoenix</td>
+<td>Deferred</td>
+<td>Phase 3D</td>
+<td>Build after websocket foundation is stable.</td>
+</tr>
+<tr class="odd">
+<td>LiveView-like server-driven UI</td>
+<td>Phoenix</td>
+<td>Deferred</td>
+<td>Post-3D exploratory track</td>
+<td>Strategic but high-scope; not on core path yet.</td>
+</tr>
+<tr class="even">
+<td>Background jobs abstraction</td>
+<td>Rails</td>
+<td>Deferred</td>
+<td>Phase 3E candidate</td>
+<td>Useful, but not a near-term parity blocker.</td>
+</tr>
+<tr class="odd">
+<td>File attachment abstraction</td>
+<td>Rails</td>
+<td>Deferred</td>
+<td>Phase 3E candidate</td>
+<td>Prefer adapter/plugin model first.</td>
+</tr>
+<tr class="even">
+<td>Mail delivery abstraction</td>
+<td>Rails</td>
+<td>Deferred</td>
+<td>Phase 3E candidate</td>
+<td>Plugin-first approach before core inclusion.</td>
+</tr>
+<tr class="odd">
+<td>Built-in caching framework</td>
+<td>Rails</td>
+<td>Deferred</td>
+<td>Phase 3E candidate</td>
+<td>Add once core observability/perf gates are mature.</td>
+</tr>
+<tr class="even">
+<td>I18n framework</td>
+<td>Rails</td>
+<td>Deferred</td>
+<td>Phase 3E candidate</td>
+<td>Platform maturity feature.</td>
+</tr>
+<tr class="odd">
+<td>Multi-node clustering primitives</td>
+<td>Phoenix</td>
+<td>Deferred</td>
+<td>Post-3E</td>
+<td>Requires stronger distributed runtime contracts.</td>
+</tr>
+<tr class="even">
+<td>Full ORM as default framework layer</td>
+<td>Rails</td>
+<td>Deferred</td>
+<td>Phase 3B optional track</td>
+<td>Keep raw SQL first-class; ORM is additive only.</td>
+</tr>
+<tr class="odd">
+<td>Inbound email framework</td>
+<td>Rails</td>
+<td>Out of Scope</td>
+<td>N/A</td>
+<td>Niche workload for Arlen core.</td>
+</tr>
+<tr class="even">
+<td>Rich-text/CMS layer</td>
+<td>Rails</td>
+<td>Out of Scope</td>
+<td>N/A</td>
+<td>Better as ecosystem/package concern.</td>
+</tr>
+<tr class="odd">
+<td>Asset pipeline in core runtime</td>
+<td>Rails</td>
+<td>Out of Scope</td>
+<td>N/A</td>
+<td>Prefer integration with external frontend toolchains.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-boomhauer-compile-failure-ux-contract-agreed">6. Boomhauer
+Compile-Failure UX Contract (Agreed)</h2>
+<ol type="1">
+<li>Default mode: when a reload compile fails, <code>boomhauer</code>
+remains alive and serves a rich error response instead of crashing.</li>
+<li>Error source coverage: include EOC transpile errors plus Objective-C
+compile/link errors in one unified response format.</li>
+<li>Content negotiation: return HTML error pages for browser HTML
+requests and structured JSON errors for API clients.</li>
+<li>Recovery behavior: automatic retry on source/template change; no
+manual process restart required.</li>
+<li>Signal-to-noise policy: show warnings in collapsed sections; keep
+hard errors expanded.</li>
+<li>Diagnostics payload: include stage, command, exit code,
+file/line/column, and source snippet where available.</li>
+</ol>
+<h2 id="7-compiled-deployment-contract-agreed">7. Compiled Deployment
+Contract (Agreed)</h2>
+<ol type="1">
+<li>Packaging baseline: container-first guidance with first-class
+VM/systemd documentation.</li>
+<li>Artifact model: immutable release artifacts for deploy/rollback
+determinism.</li>
+<li>Runtime config: plist + environment overrides; no compile-time
+secrets.</li>
+<li>Migration policy: explicit <code>migrate</code> step in deploy
+workflow by default.</li>
+<li>Availability model: zero-downtime rolling reload baseline in
+<code>propane</code>.</li>
+<li>Health model: readiness and liveness endpoints as first-class
+production contract.</li>
+<li>Logging model: structured JSON logs to stdout/stderr by default in
+production.</li>
+<li>Rollback model: first-class previous-release switch and restart
+workflow.</li>
+</ol>
+<h2 id="8-refactor-program-required-by-parity-goals">8. Refactor Program
+Required by Parity Goals</h2>
+<ol type="1">
+<li>Error contract unification (Phase 2C): consolidate runtime,
+transpiler, and compiler error shapes.</li>
+<li>Developer reload pipeline split (Phase 2C): isolate
+<code>boomhauer</code> supervisor from app child process/build
+execution.</li>
+<li>Routing API expansion (Phase 2D): add grouped routes, route guards,
+and content-negotiation hooks without breaking existing APIs.</li>
+<li>Extension surface normalization (Phase 3A): formal plugin/hook
+protocols, lifecycle hooks, and compatibility test harness.</li>
+<li>Test harness expansion (Phase 2D-3A): fixture-driven parity tests
+mapped to in-scope capability matrix items.</li>
+<li>Runtime stage-timing completion (Phase 2C): add deterministic parse
+and response-write timing stages across dynamic/static/error paths.</li>
+<li>Perf configuration enforcement (Phase 2C): wire
+<code>performanceLogging</code> into runtime headers/log payload
+behavior.</li>
+<li>Perf gate hardening (Phase 2D): make CI/release path run mandatory
+perf gate and broaden guardrails beyond single endpoint p95.</li>
+<li>Baseline governance hardening (Phase 2D-3C): baseline metadata,
+explicit refresh policy, and trend reporting.</li>
+</ol>
+<h2 id="9-test-parity-policy">9. Test Parity Policy</h2>
+<ul>
+<li>Benchmark quality by in-scope behavior coverage and regression
+detection strength, not by matching raw test counts.</li>
+<li>Maintain a capability-to-tests mapping for every in-scope matrix
+item.</li>
+<li>Require positive-path and negative-path coverage for each new parity
+feature.</li>
+<li>Publish parity gap reports each release cycle with explicit
+defer/out-of-scope rationale.</li>
+<li>Keep performance regression checks mandatory in CI/release workflow,
+with any bypass requiring explicit, time-bounded rationale.</li>
+</ul>
+</main></body>
+</html>

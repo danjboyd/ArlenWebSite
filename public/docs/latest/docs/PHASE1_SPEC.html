@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/PHASE1_SPEC</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/PHASE1_SPEC</h1>
+</header>
+<h1 id="arlen-phase-1-specification">Arlen Phase 1 Specification</h1>
+<p>Status: Draft<br />
+Last updated: 2026-02-18</p>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>Phase 1 delivers a production-usable, bare-bones MVC framework for
+GNUstep/Objective-C applications.</p>
+<p>The intent is not to clone Mojolicious internals. The intent is to
+solve similar web-application problems while staying fully aligned with
+Objective-C/GNUstep conventions and strengths:</p>
+<ul>
+<li>Foundation-first APIs</li>
+<li>Objective-C class/protocol design</li>
+<li><code>NSError **</code> error propagation</li>
+<li>deterministic build and runtime behavior</li>
+<li>strong testability and measurable performance</li>
+</ul>
+<h2 id="2-design-principles">2. Design Principles</h2>
+<ol type="1">
+<li>GNUstep-native, not language-agnostic.</li>
+<li>Prefer existing GNUstep Foundation/libs-base functionality over
+custom framework primitives.</li>
+<li>Keep HTTP scope explicit: HTTPS is out of scope in framework
+runtime.</li>
+<li>Make performance visible with built-in instrumentation and benchmark
+gates.</li>
+<li>Keep Phase 1 small enough to ship and reliable enough to host real
+apps.</li>
+<li>Default-first developer experience: optimize for simple apps first,
+advanced customization second.</li>
+</ol>
+<h2 id="21-developer-experience-goal">2.1 Developer Experience Goal</h2>
+<p>Arlen should be dead simple for application developers to use.</p>
+<p>Primary product goal:</p>
+<ul>
+<li>80-90% of applications should run on rational framework defaults
+without needing internal framework changes.</li>
+<li>Advanced behavior should be available through explicit extension
+points (subclassing, middleware, hooks, custom config), not by rewriting
+runtime internals.</li>
+</ul>
+<p>This follows the same high-level philosophy used by frameworks like
+Mojolicious:</p>
+<ul>
+<li>strong conventions and sane defaults for common use cases</li>
+<li>progressive disclosure for advanced capabilities</li>
+</ul>
+<p>Phase 1 expectations for this goal:</p>
+<ol type="1">
+<li>A minimal app should only require basic route/controller/template
+code and a small startup entrypoint.</li>
+<li>HTTP server internals (socket loop, parse limits, signal handling,
+proxy plumbing) should live in framework code, not normal app code.</li>
+<li>CLI and generated app scaffolds should prefer defaults and avoid
+forcing verbose configuration.</li>
+</ol>
+<h2 id="3-phase-1-scope">3. Phase 1 Scope</h2>
+<h3 id="in-scope">In Scope</h3>
+<ul>
+<li>HTTP/1.1 plaintext app server.</li>
+<li>Router with method + path matching and path parameters.</li>
+<li>Controller/action dispatch model.</li>
+<li><code>arlen</code> CLI for app generation, dev run, test, and
+diagnostics.</li>
+<li>Full app mode as default application style.</li>
+<li>Lite app mode as optional single-file syntax sugar over the same
+runtime.</li>
+<li>View rendering via EOC (<code>.html.eoc</code>) templates.</li>
+<li>Partial include support via template registry.</li>
+<li>Request/response/context abstractions.</li>
+<li>Config loading with environment overlays.</li>
+<li>Structured logging and request timing metrics.</li>
+<li>Unit, integration, and performance test suites.</li>
+<li>Developer server workflow for local iteration.</li>
+<li>Reverse-proxy deployment model (nginx/apache/Caddy in front).</li>
+</ul>
+<h3 id="explicitly-out-of-scope">Explicitly Out of Scope</h3>
+<ul>
+<li>HTTPS/TLS termination inside framework runtime.</li>
+<li>WebSockets, SSE, HTTP/2.</li>
+<li>Prefork worker manager (<code>propane</code>) and its configuration
+surface ("propane accessories").</li>
+<li>Built-in ORM as a core dependency.</li>
+<li>Distributed session stores.</li>
+<li>Job queue framework.</li>
+<li>Auto-scaling orchestration.</li>
+</ul>
+<h2 id="4-high-level-architecture">4. High-Level Architecture</h2>
+<h3 id="41-subsystems">4.1 Subsystems</h3>
+<ul>
+<li><code>src/Arlen/Core/</code>
+<ul>
+<li>application bootstrap</li>
+<li>environment/config resolution</li>
+<li>service container/registry</li>
+</ul></li>
+<li><code>src/Arlen/HTTP/</code>
+<ul>
+<li>socket listener</li>
+<li>request parsing</li>
+<li>response serialization</li>
+</ul></li>
+<li><code>src/Arlen/MVC/Routing/</code>
+<ul>
+<li>route table</li>
+<li>method/path matcher</li>
+<li>route param extraction</li>
+</ul></li>
+<li><code>src/Arlen/MVC/Controller/</code>
+<ul>
+<li>base controller helpers</li>
+<li>action dispatch</li>
+</ul></li>
+<li><code>src/Arlen/MVC/View/</code>
+<ul>
+<li>view lookup</li>
+<li>render orchestration</li>
+</ul></li>
+<li><code>src/Arlen/MVC/Template/</code>
+<ul>
+<li>EOC transpiler/runtime (already bootstrapped)</li>
+</ul></li>
+<li><code>src/Arlen/Support/</code>
+<ul>
+<li>logging, metrics, utility helpers</li>
+</ul></li>
+</ul>
+<h3 id="42-core-runtime-types">4.2 Core Runtime Types</h3>
+<ul>
+<li><code>ALNApplication</code>
+<ul>
+<li>owns server, router, config, middleware chain</li>
+</ul></li>
+<li><code>ALNRequest</code>
+<ul>
+<li>immutable request model</li>
+</ul></li>
+<li><code>ALNResponse</code>
+<ul>
+<li>mutable response builder</li>
+</ul></li>
+<li><code>ALNContext</code>
+<ul>
+<li>request-scoped object with request/response
+params/stash/logger/metrics</li>
+</ul></li>
+<li><code>ALNRouter</code>
+<ul>
+<li>route registration and matching</li>
+</ul></li>
+<li><code>ALNController</code>
+<ul>
+<li>base class with render helpers</li>
+</ul></li>
+</ul>
+<h2 id="5-http-and-networking">5. HTTP and Networking</h2>
+<h3 id="51-protocol-support">5.1 Protocol Support</h3>
+<ul>
+<li>HTTP/1.1 only.</li>
+<li>Keep-alive optional in Phase 1 (default off if complexity impacts
+reliability).</li>
+<li>Bind defaults to <code>127.0.0.1</code> for dev safety.</li>
+</ul>
+<h3 id="52-reverse-proxy-model">5.2 Reverse Proxy Model</h3>
+<ul>
+<li>Framework handles plaintext HTTP on loopback/private network.</li>
+<li>TLS termination and public ingress are delegated to
+nginx/apache/Caddy.</li>
+<li>Proxy headers (<code>X-Forwarded-For</code>,
+<code>X-Forwarded-Proto</code>) parsed only when trusted proxy mode is
+enabled.</li>
+</ul>
+<h3 id="53-request-limits">5.3 Request Limits</h3>
+<ul>
+<li>Configurable max request line, header bytes, and body size.</li>
+<li>Over-limit responses:
+<ul>
+<li><code>413 Payload Too Large</code></li>
+<li><code>431 Request Header Fields Too Large</code></li>
+</ul></li>
+</ul>
+<h2 id="6-routing">6. Routing</h2>
+<h3 id="61-route-features">6.1 Route Features</h3>
+<ul>
+<li>method + path route registration</li>
+<li>path parameter extraction (<code>/users/:id</code>)</li>
+<li>wildcard tail (<code>/assets/*path</code>) optional in Phase 1</li>
+<li>named routes for URL generation</li>
+</ul>
+<h3 id="62-route-priority">6.2 Route Priority</h3>
+<p>Order:</p>
+<ol type="1">
+<li>static exact routes</li>
+<li>parameterized routes</li>
+<li>wildcard routes</li>
+</ol>
+<p>If tie remains, first registration wins.</p>
+<h3 id="63-controller-binding">6.3 Controller Binding</h3>
+<p>Route target convention:</p>
+<ul>
+<li><code>ControllerClass#actionMethod</code></li>
+</ul>
+<p>Example:</p>
+<ul>
+<li><code>GET /users/:id -&gt; UsersController#show</code></li>
+</ul>
+<h2 id="7-controller-and-view-behavior">7. Controller and View
+Behavior</h2>
+<h3 id="71-controller-contract">7.1 Controller Contract</h3>
+<p>Recommended action signature:</p>
+<pre class="objc"><code>- (id)show:(ALNContext *)ctx;</code></pre>
+<p>Action responsibilities:</p>
+<ul>
+<li>read request/route/query/body inputs from <code>ctx</code></li>
+<li>call domain/repository services</li>
+<li>set response via helper methods</li>
+<li>optionally return an object for implicit response handling</li>
+</ul>
+<h3 id="72-render-helpers">7.2 Render Helpers</h3>
+<p>Minimum Phase 1 helpers:</p>
+<ul>
+<li><code>renderTemplate:@"users/show" context:...</code></li>
+<li><code>renderJSON:object</code></li>
+<li><code>renderText:string</code></li>
+<li><code>redirectTo:status:</code></li>
+<li><code>setStatus:</code></li>
+</ul>
+<p>Controller class JSON options:</p>
+<ul>
+<li><code>+ (NSJSONWritingOptions)jsonWritingOptions;</code></li>
+<li>default returns <code>0</code></li>
+<li>subclasses may override (for example pretty-print in
+development)</li>
+</ul>
+<h3 id="73-eoc-template-lookup">7.3 EOC Template Lookup</h3>
+<p>Convention:</p>
+<ul>
+<li>logical template <code>users/show</code> -&gt;
+<code>templates/users/show.html.eoc</code></li>
+</ul>
+<p>Partials:</p>
+<ul>
+<li><code>templates/partials/_nav.html.eoc</code></li>
+</ul>
+<p>Layouts:</p>
+<ul>
+<li>supported in simple form in Phase 1</li>
+<li>explicit render option rather than implicit global magic</li>
+</ul>
+<h3 id="74-escaping-rules">7.4 Escaping Rules</h3>
+<ul>
+<li><code>&lt;%= ... %&gt;</code> escapes HTML by default.</li>
+<li><code>&lt;%== ... %&gt;</code> bypasses escaping.</li>
+<li>template code is trusted code in Phase 1.</li>
+</ul>
+<h3 id="75-implicit-json-response-behavior">7.5 Implicit JSON Response
+Behavior</h3>
+<p>If an action returns <code>NSDictionary</code> or
+<code>NSArray</code>, and no explicit render/redirect has already been
+performed, framework behavior is:</p>
+<ol type="1">
+<li>serialize return value with <code>NSJSONSerialization</code></li>
+<li>use <code>+[ControllerClass jsonWritingOptions]</code></li>
+<li>set <code>Content-Type: application/json; charset=utf-8</code></li>
+<li>set status <code>200</code> if status is unset</li>
+<li>write serialized JSON response body</li>
+</ol>
+<p>Failure behavior:</p>
+<ul>
+<li>JSON serialization failure returns <code>500</code></li>
+<li>error is logged with controller/action context and request id</li>
+</ul>
+<p>Guardrails:</p>
+<ul>
+<li>Implicit JSON is limited to <code>NSDictionary</code> and
+<code>NSArray</code> in Phase 1.</li>
+<li>Scalar/object implicit serialization is out of scope in Phase
+1.</li>
+<li>explicit <code>renderJSON:</code> always takes precedence over
+implicit behavior.</li>
+</ul>
+<h2 id="8-configuration">8. Configuration</h2>
+<h3 id="81-files">8.1 Files</h3>
+<ul>
+<li><code>config/app.plist</code></li>
+<li><code>config/environments/development.plist</code></li>
+<li><code>config/environments/test.plist</code></li>
+<li><code>config/environments/production.plist</code></li>
+</ul>
+<p>Load order:</p>
+<ol type="1">
+<li><code>app.plist</code></li>
+<li>environment file</li>
+<li>environment variables</li>
+</ol>
+<h3 id="82-required-settings">8.2 Required Settings</h3>
+<ul>
+<li>bind host</li>
+<li>port</li>
+<li>environment</li>
+<li>logging format</li>
+<li>request size limits</li>
+<li>trusted proxy mode</li>
+<li>performance logging enable/disable</li>
+</ul>
+<h2 id="9-logging-and-error-handling">9. Logging and Error Handling</h2>
+<h3 id="91-error-conventions">9.1 Error Conventions</h3>
+<ul>
+<li>Foundation-style errors with <code>NSError **</code>.</li>
+<li>domain names by subsystem:
+<ul>
+<li><code>Arlen.HTTP.Error</code></li>
+<li><code>Arlen.Routing.Error</code></li>
+<li><code>Arlen.Controller.Error</code></li>
+<li><code>Arlen.EOC.Error</code></li>
+</ul></li>
+</ul>
+<h3 id="92-request-logging">9.2 Request Logging</h3>
+<p>Per-request log includes:</p>
+<ul>
+<li>request id</li>
+<li>method</li>
+<li>path</li>
+<li>status</li>
+<li>total duration</li>
+<li>route/controller action</li>
+</ul>
+<p>Logging formats:</p>
+<ul>
+<li>text (dev)</li>
+<li>JSON lines (prod/test/perf)</li>
+</ul>
+<h2 id="10-performance-architecture">10. Performance Architecture</h2>
+<p>Performance is a first-class Phase 1 feature, not deferred work.</p>
+<h3 id="101-built-in-timers">10.1 Built-In Timers</h3>
+<p>Track and emit stage timings:</p>
+<ul>
+<li>request parse</li>
+<li>route match</li>
+<li>controller execution</li>
+<li>view/template render</li>
+<li>response write</li>
+<li>total request</li>
+</ul>
+<h3 id="102-metrics-export">10.2 Metrics Export</h3>
+<p>Phase 1 output targets:</p>
+<ul>
+<li>console summary</li>
+<li>JSON report file under <code>build/perf/</code></li>
+<li>optional CSV for external analysis</li>
+</ul>
+<h3 id="103-benchmark-suite">10.3 Benchmark Suite</h3>
+<p>Add <code>tests/performance/</code> with repeatable scenarios:</p>
+<ul>
+<li>trivial text endpoint</li>
+<li>routed controller endpoint</li>
+<li>EOC rendered endpoint</li>
+<li>endpoint with partial include</li>
+</ul>
+<p>Benchmark output fields:</p>
+<ul>
+<li>requests/sec</li>
+<li>p50/p95/p99 latency</li>
+<li>max latency</li>
+<li>error rate</li>
+<li>memory snapshot before/after run</li>
+</ul>
+<h3 id="104-regression-gate">10.4 Regression Gate</h3>
+<p>Default gate in CI/local perf target:</p>
+<ul>
+<li>fail when p95 latency regresses by &gt;15% against baseline profile
+under identical scenario</li>
+</ul>
+<p>Baseline files:</p>
+<ul>
+<li><code>tests/performance/baselines/*.json</code></li>
+</ul>
+<h2 id="11-testing-strategy">11. Testing Strategy</h2>
+<h3 id="111-unit-tests">11.1 Unit Tests</h3>
+<ul>
+<li>parser/tokenizer/transpiler correctness</li>
+<li>router matching and precedence</li>
+<li>controller helper behavior</li>
+<li>config merge logic</li>
+</ul>
+<h3 id="112-integration-tests">11.2 Integration Tests</h3>
+<ul>
+<li>start server on ephemeral port</li>
+<li>exercise HTTP endpoints</li>
+<li>assert status, headers, body, and content type</li>
+<li>assert template rendering and escaping</li>
+</ul>
+<h3 id="113-performance-tests">11.3 Performance Tests</h3>
+<ul>
+<li>controlled warm-up</li>
+<li>fixed iteration counts</li>
+<li>deterministic scenario scripts</li>
+<li>machine metadata captured in report for traceability</li>
+</ul>
+<h3 id="114-test-runner-standard">11.4 Test Runner Standard</h3>
+<ul>
+<li><code>tools-xctest</code>/<code>xctest</code> as canonical test
+framework runner</li>
+<li>GNUstep environment initialization required before test
+execution</li>
+</ul>
+<h2 id="12-build-and-development-workflow">12. Build and Development
+Workflow</h2>
+<h3 id="121-build-pipeline">12.1 Build Pipeline</h3>
+<ol type="1">
+<li>transpile templates (<code>eocc</code>)</li>
+<li>compile generated sources</li>
+<li>compile runtime/app components</li>
+<li>build CLI (<code>arlen</code>)</li>
+<li>run unit/integration tests</li>
+<li>run performance suite</li>
+</ol>
+<p><code>arlen</code> is the standard developer entry point for
+generating and running full/lite applications.</p>
+<h3 id="122-dev-server">12.2 Dev Server</h3>
+<p>Phase 1 target:</p>
+<ul>
+<li>single-process developer server (<code>boomhauer</code>)</li>
+<li>direct <code>boomhauer</code> CLI workflow from app root</li>
+<li>default watch mode to restart/recompile on
+source/template/config/public changes</li>
+<li>should prioritize reliability over ultra-fast reload</li>
+</ul>
+<h3 id="123-server-naming-convention">12.3 Server Naming Convention</h3>
+<ul>
+<li>Development server name: <code>boomhauer</code>.</li>
+<li>Production process manager name (Phase 2):
+<code>propane</code>.</li>
+<li>All <code>propane</code> configuration settings and grouped config
+sections must be referred to as "propane accessories".</li>
+</ul>
+<h2 id="13-data-layer-policy-phase-1">13. Data Layer Policy (Phase
+1)</h2>
+<p>No framework-mandated ORM in Phase 1.</p>
+<p>Provide repository-oriented abstraction points:</p>
+<ul>
+<li>protocol-based repositories</li>
+<li>transaction boundary hooks</li>
+<li>clear service injection points in controllers</li>
+</ul>
+<p>This keeps persistence flexible and allows Phase 2 modules such
+as:</p>
+<ul>
+<li><code>ArlenPg</code> analog to <code>Mojo::Pg</code></li>
+<li>optional GDL2 integration module</li>
+<li>optional custom ORM experiments behind stable interfaces</li>
+</ul>
+<h2 id="14-security-posture-phase-1">14. Security Posture (Phase 1)</h2>
+<ul>
+<li>Trusted templates.</li>
+<li>TLS out of framework scope.</li>
+<li>header/body size limits enforced.</li>
+<li>safe HTML escaping default in templates.</li>
+<li>explicit raw HTML output only with
+<code>&lt;%== ... %&gt;</code>.</li>
+<li>no claim of sandboxing or untrusted code execution.</li>
+</ul>
+<h2 id="15-deliverables">15. Deliverables</h2>
+<p>Phase 1 is complete when the following are true:</p>
+<ol type="1">
+<li>A multi-route MVC app can run and serve responses over HTTP.</li>
+<li>Controller actions can render EOC templates and JSON.</li>
+<li>App runs behind reverse proxy in plaintext mode.</li>
+<li>Unit/integration suites pass in CI.</li>
+<li>Performance suite emits stable reports and enforces regression
+gate.</li>
+<li>Developer workflow supports local iteration with a dev server.</li>
+</ol>
+<h2 id="16-recommended-milestone-sequence">16. Recommended Milestone
+Sequence</h2>
+<ol type="1">
+<li>Router + request/response/context core.</li>
+<li>Controller dispatch and helper API.</li>
+<li>View resolver + EOC integration with layout support.</li>
+<li>Config loader + environment overlays.</li>
+<li>Structured logging + request timing.</li>
+<li>Integration test harness.</li>
+<li>Performance benchmark suite + regression gate.</li>
+<li>Documentation and example app hardening.</li>
+</ol>
+<h2 id="17-key-decision-points-requiring-confirmation">17. Key Decision
+Points Requiring Confirmation</h2>
+<ol type="1">
+<li><p>Concurrency model in Phase 1</p>
+<ul>
+<li>Recommendation: single process + bounded thread pool.</li>
+<li>Rationale: better throughput than strict single-thread while keeping
+complexity lower than prefork/event-loop architecture.</li>
+</ul></li>
+<li><p>Dev reload model</p>
+<ul>
+<li>Recommendation: full process restart on source/template/config
+changes.</li>
+<li>Rationale: most reliable behavior for Objective-C runtime and
+generated code updates.</li>
+</ul></li>
+<li><p>Session support in Phase 1</p>
+<ul>
+<li>Recommendation: signed cookie session only, no server-side
+store.</li>
+<li>Rationale: minimal operational complexity while supporting common
+auth flow prototypes.</li>
+</ul></li>
+<li><p>Static assets in Phase 1</p>
+<ul>
+<li>Recommendation: framework serves static assets in development only;
+production delegated to reverse proxy.</li>
+<li>Rationale: keeps core focused and avoids duplicate static serving
+optimizations.</li>
+</ul></li>
+<li><p>Logging default format</p>
+<ul>
+<li>Recommendation: text in development, JSON lines in
+test/production.</li>
+<li>Rationale: readable local logs plus machine-friendly structured logs
+for automation.</li>
+</ul></li>
+<li><p>Phase 1 persistence stance</p>
+<ul>
+<li>Recommendation: repository protocols only; postpone ORM decision to
+Phase 2.</li>
+<li>Rationale: preserves flexibility for GDL2, ArlenPg, or custom ORM
+without core churn.</li>
+</ul></li>
+<li><p>Performance gate strictness</p>
+<ul>
+<li>Recommendation: fail when p95 regresses by &gt;15% in controlled
+perf suite.</li>
+<li>Rationale: meaningful guardrail that catches real regressions while
+avoiding noise.</li>
+</ul></li>
+</ol>
+</main></body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - V1_SPEC</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - V1_SPEC</h1>
+</header>
+<h1 id="arlen-eoc-template-engine-v1-specification">Arlen EOC Template
+Engine v1 Specification</h1>
+<p>Status: Draft v1 Target: GNUstep + Objective-C</p>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>Define a first working version of an EOC (Encapsulated Objective-C)
+HTML template system for Objective-C/GNUstep that compiles
+<code>.html.eoc</code> templates into Objective-C source files.</p>
+<p>v1 is focused on correctness, diagnostics, and build integration. It
+is not yet a full app server.</p>
+<h2 id="2-scope">2. Scope</h2>
+<h3 id="in-scope-v1">In Scope (v1)</h3>
+<ul>
+<li><code>.html.eoc</code> template syntax with Objective-C code
+blocks.</li>
+<li>A template transpiler that converts template text into Objective-C
+<code>.m</code> files.</li>
+<li>Build-time integration with <code>gnustep-make</code>.</li>
+<li>HTML escaping by default for expression output.</li>
+<li>Optional raw output for trusted content.</li>
+<li>Template partial includes.</li>
+<li>Error mapping from generated code back to template file and
+line.</li>
+</ul>
+<h3 id="out-of-scope-v1">Out of Scope (v1)</h3>
+<ul>
+<li>Runtime compilation/reload server mode.</li>
+<li>Automatic layout inheritance system.</li>
+<li>Sandbox or untrusted-template execution model.</li>
+<li>Full HTTP routing/controller framework.</li>
+</ul>
+<h2 id="3-template-syntax">3. Template Syntax</h2>
+<p>Template files use <code>.html.eoc</code>.</p>
+<p>Supported tags:</p>
+<ul>
+<li><code>&lt;% code %&gt;</code>: Insert raw Objective-C
+statements.</li>
+<li><code>&lt;%= expr %&gt;</code>: Evaluate expression and append
+HTML-escaped output.</li>
+<li><code>&lt;%== expr %&gt;</code>: Evaluate expression and append raw
+output.</li>
+<li><code>&lt;%# comment %&gt;</code>: Template comment, ignored.</li>
+</ul>
+<h3 id="example">Example</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span><span class="er">&lt;</span>%= [ctx title] %&gt;<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">ul</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;</span>% for (NSString *item in [ctx items]) { %&gt;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">li</span><span class="dt">&gt;</span><span class="er">&lt;</span>%= item %&gt;<span class="dt">&lt;/</span><span class="kw">li</span><span class="dt">&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;</span>% } %&gt;</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">ul</span><span class="dt">&gt;</span></span></code></pre></div>
+<h2 id="4-rendering-contract">4. Rendering Contract</h2>
+<p>Each template compiles into one render function with a deterministic
+symbol name.</p>
+<p>Proposed signature:</p>
+<pre class="objc"><code>NSString *ALNEOCRender_templates_index_html_eoc(id ctx, NSError **error);</code></pre>
+<p>Behavior:</p>
+<ul>
+<li>Returns rendered HTML string on success.</li>
+<li>Returns <code>nil</code> on failure and fills <code>error</code>
+when available.</li>
+<li>Uses <code>NSMutableString</code> as output buffer.</li>
+</ul>
+<p>Context model:</p>
+<ul>
+<li><code>ctx</code> is object-based (<code>id</code>) to allow
+idiomatic Objective-C method calls.</li>
+<li>Optional helper protocol(s) may be added later, but v1 does not
+require strict protocol conformance.</li>
+</ul>
+<h2 id="5-escaping-rules">5. Escaping Rules</h2>
+<ul>
+<li><code>&lt;%= expr %&gt;</code> must HTML-escape <code>&amp;</code>,
+<code>&lt;</code>, <code>&gt;</code>, <code>"</code>, and
+<code>'</code>.</li>
+<li><code>&lt;%== expr %&gt;</code> performs no escaping.</li>
+<li><code>nil</code> expression output appends empty string.</li>
+<li>Non-string objects are converted using
+<code>-[NSObject description]</code>.</li>
+</ul>
+<p>Escaping helper (v1) will live in runtime support code, called by
+generated templates.</p>
+<h2 id="6-partials">6. Partials</h2>
+<p>v1 supports partial include through generated helper calls.</p>
+<p>Template usage example:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode html"><code class="sourceCode html"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="er">&lt;</span>% ALNEOCInclude(out, ctx, @&quot;partials/_nav.html.eoc&quot;, error); %&gt;</span></code></pre></div>
+<p>Behavior:</p>
+<ul>
+<li>Include resolves using configured template root.</li>
+<li>Include shares the same <code>ctx</code>.</li>
+<li>Include failure bubbles up via <code>error</code>.</li>
+</ul>
+<h2 id="7-transpiler-behavior">7. Transpiler Behavior</h2>
+<p>Transpiler input:</p>
+<ul>
+<li>Source template path (<code>.html.eoc</code>)</li>
+</ul>
+<p>Transpiler output:</p>
+<ul>
+<li>Generated <code>.m</code> file containing render function.</li>
+</ul>
+<p>Implementation requirements:</p>
+<ul>
+<li>Use a deterministic state machine parser (TEXT, TAG).</li>
+<li>Do not rely on regex-only parsing.</li>
+<li>Support multiline code and expressions.</li>
+<li>Emit <code>#line</code> directives before generated chunks to
+preserve template file/line diagnostics.</li>
+</ul>
+<p>Parsing errors must include:</p>
+<ul>
+<li>Template path</li>
+<li>Line number</li>
+<li>Column number (if known)</li>
+<li>Human-readable reason (e.g., unclosed tag)</li>
+</ul>
+<h2 id="8-build-integration-gnustep-make">8. Build Integration
+(gnustep-make)</h2>
+<p>v1 build pipeline:</p>
+<ol type="1">
+<li>Collect all <code>templates/**/*.html.eoc</code>.</li>
+<li>Run transpiler to emit generated <code>.m</code> into a build
+directory (for example <code>build/gen/templates</code>).</li>
+<li>Add generated <code>.m</code> files to normal Objective-C
+compilation inputs.</li>
+<li>Link with runtime support module (escape helpers, include
+dispatch).</li>
+</ol>
+<p>Rules:</p>
+<ul>
+<li>Generated code is build output and should not be committed.</li>
+<li>Build should fail fast if transpilation fails.</li>
+</ul>
+<h2 id="9-file-and-naming-conventions">9. File and Naming
+Conventions</h2>
+<ul>
+<li>Source templates: <code>templates/**/*.html.eoc</code></li>
+<li>Generated files: <code>build/gen/templates/**/*.eoc.m</code></li>
+<li>Generated symbol format:
+<code>ALNEOCRender_&lt;sanitized_template_path&gt;</code></li>
+<li>Runtime support code location (planned):
+<code>src/Arlen/MVC/Template/</code></li>
+</ul>
+<p>Extension rules:</p>
+<ul>
+<li>v1 canonical view extension is <code>.html.eoc</code>.</li>
+<li>Future content types may use <code>.json.eoc</code>,
+<code>.txt.eoc</code>, etc.</li>
+</ul>
+<p>Sanitization rules:</p>
+<ul>
+<li>Replace non-alphanumeric characters with <code>_</code>.</li>
+<li>Preserve deterministic mapping across builds.</li>
+</ul>
+<h2 id="10-security-model">10. Security Model</h2>
+<p>Templates are trusted code in v1.</p>
+<p>Implications:</p>
+<ul>
+<li>Any valid Objective-C in templates executes with process
+privileges.</li>
+<li>No sandboxing guarantees.</li>
+<li>Raw output tag <code>&lt;%== ... %&gt;</code> must be used
+carefully.</li>
+</ul>
+<h2 id="11-v1-acceptance-criteria">11. v1 Acceptance Criteria</h2>
+<ul>
+<li>Can render a template with plain text, control flow, and expression
+output.</li>
+<li><code>&lt;%= ... %&gt;</code> escapes correctly.</li>
+<li><code>&lt;%== ... %&gt;</code> outputs raw string.</li>
+<li>Partial include works.</li>
+<li>Compiler/transpiler errors point to original template lines.</li>
+<li>Example app template compiles and runs through GNUstep build.</li>
+</ul>
+<h2 id="12-milestones">12. Milestones</h2>
+<ol type="1">
+<li>Parser + transpiler CLI prototype for one template.</li>
+<li>Runtime helpers (escape + include dispatch).</li>
+<li><code>gnustep-make</code> prebuild integration.</li>
+<li>Unit + fixture tests for parser and generated code.</li>
+<li>Example MVC-style app skeleton using compiled templates.</li>
+</ol>
+</main></body>
+</html>

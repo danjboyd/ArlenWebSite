@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/PHASE2_PHASE3_ROADMAP</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/PHASE2_PHASE3_ROADMAP</h1>
+</header>
+<h1 id="arlen-phase-2--phase-3-roadmap-index">Arlen Phase 2 + Phase 3
+Roadmap Index</h1>
+<p>Status: Active (Phase 2A, Phase 2B, and Phase 2C complete; Phase 2D
+next)<br />
+Last updated: 2026-02-19</p>
+<p>This index points to the current roadmap documents:</p>
+<ul>
+<li><code>docs/PHASE2_ROADMAP.md</code></li>
+<li><code>docs/PHASE3_ROADMAP.md</code></li>
+<li><code>docs/FEATURE_PARITY_MATRIX.md</code></li>
+</ul>
+<h2 id="summary">Summary</h2>
+<p>Phase 2 is focused on adoption-critical capabilities:</p>
+<ul>
+<li><code>propane</code> and production runtime hardening (Phase 2A
+complete)</li>
+<li>data/security core (Phase 2B complete)</li>
+<li>developer error and validation ergonomics (Phase 2C complete)</li>
+<li>parity baseline completion for remaining in-scope core capabilities
+(Phase 2D)</li>
+<li>compiled deployment contract baseline (release artifacts, migrate,
+health, rollback)</li>
+<li>performance gap closure (stage coverage, runtime toggles, mandatory
+CI perf gate)</li>
+</ul>
+<p>Phase 3 is focused on platform maturity:</p>
+<ul>
+<li>observability and plugin/lifecycle extension system</li>
+<li>optional SQL builder and optional GDL2 adapter path</li>
+<li>release/distribution and documentation maturity</li>
+<li>advanced performance trend analysis and expanded workload
+profiles</li>
+<li>deferred parity capabilities (websocket/SSE/realtime/mounting)</li>
+<li>deferred ecosystem services track</li>
+</ul>
+<h2 id="data-layer-direction">Data Layer Direction</h2>
+<ul>
+<li>Raw SQL remains first-class in Arlen.</li>
+<li>SQL abstraction is additive and optional.</li>
+<li>GDL2 is scoped as a compatibility adapter path, not a core
+dependency.</li>
+</ul>
+<h2 id="parity-direction">Parity Direction</h2>
+<ul>
+<li>Arlen parity targets behavior/capability outcomes for in-scope
+features.</li>
+<li>Arlen remains Cocoa-forward and GNUstep-native in API design.</li>
+<li>Syntax-level mirroring with Mojolicious is optional and only used
+when it improves clarity.</li>
+</ul>
+</main></body>
+</html>

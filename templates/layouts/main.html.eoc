@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title><%= [ctx objectForKey:@"pageTitle"] %></title>
+    <meta name="description" content="<%= [ctx objectForKey:@"metaDescription"] %>">
+    <link rel="icon" href="/static/branding/arlen-mark.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/static/site.css">
+    <script defer src="/static/site.js"></script>
+  </head>
+  <body>
+    <div class="ambient-sky" aria-hidden="true"></div>
+    <div class="ambient-hills" aria-hidden="true"></div>
+
+    <div class="page-shell">
+      <header class="topbar container">
+        <a class="brand" href="/" aria-label="Arlen homepage">
+          <img src="<%= [ctx objectForKey:@"logoPath"] %>" alt="Arlen logo">
+        </a>
+
+        <% ALNEOCInclude(out, ctx, @"partials/_nav.html.eoc", error); %>
+
+        <a class="topbar-link" href="/guides/get-started">Get Started</a>
+      </header>
+
+      <main class="container">
+        <%== [ctx objectForKey:@"content"] %>
+      </main>
+
+      <footer class="footer container">
+        <p>
+          Powered by Arlen.
+          Read the <a href="/docs/latest">latest docs</a>.
+        </p>
+        <p class="footer-subtle">Copyright <%= [ctx objectForKey:@"year"] %> Arlen contributors.</p>
+      </footer>
+    </div>
+  </body>
+</html>

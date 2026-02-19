@@ -1,0 +1,37 @@
+<section class="page-hero reveal">
+  <p class="eyebrow">Documentation</p>
+  <h1>Everything you need to ship with Arlen</h1>
+  <p class="lead">
+    Official guides and references for building, deploying, and operating Arlen applications.
+  </p>
+</section>
+
+<section class="section-block">
+  <div class="version-grid">
+    <% for (NSDictionary *item in [ctx objectForKey:@"docVersions"]) { %>
+    <article class="version-card reveal">
+      <h2><%= [item objectForKey:@"name"] %></h2>
+      <p class="pill-inline"><%= [item objectForKey:@"label"] %></p>
+      <p><%= [item objectForKey:@"description"] %></p>
+      <a class="btn btn-secondary" href="<%= [item objectForKey:@"href"] %>">Open</a>
+    </article>
+    <% } %>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="section-head reveal">
+    <h2>Current documentation set</h2>
+  </div>
+  <ul class="doc-topic-list">
+    <% for (NSString *topic in [ctx objectForKey:@"docTopics"]) { %>
+    <li class="reveal"><%= topic %></li>
+    <% } %>
+  </ul>
+</section>
+
+<section class="section-block reveal">
+  <h2>Documentation cadence</h2>
+  <p>Arlen documentation evolves continuously with the framework.</p>
+  <p>Use <a href="/docs/latest">/docs/latest</a> for the current documentation set.</p>
+</section>

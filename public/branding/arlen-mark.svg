@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">Arlen Mark</title>
+  <desc id="desc">Stylized Arlen A symbol with warm flame and hill lines.</desc>
+  <defs>
+    <linearGradient id="markFlame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f7b561"/>
+      <stop offset="100%" stop-color="#dc7d2e"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="24" fill="#eef3f6"/>
+  <path d="M16 94c19-14 35-18 53-13 14 4 23 12 40 10" fill="none" stroke="#6f7f49" stroke-width="8" stroke-linecap="round"/>
+  <path d="M64 18l30 68H78l-6-14H56l-6 14H34l30-68h0zm-8 18l-8 20h16l-8-20z" fill="#1f4768"/>
+  <path d="M64 8c4 8 8 14 8 21 0 6-3 11-8 15-5-4-8-9-8-15 0-7 4-13 8-21z" fill="url(#markFlame)"/>
+</svg>

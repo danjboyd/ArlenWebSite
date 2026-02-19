@@ -1,0 +1,26 @@
+<section class="page-hero reveal">
+  <p class="eyebrow">Showcase</p>
+  <h1>Pragmatic surfaces for real teams</h1>
+  <p class="lead">
+    Arlen is designed to handle product pages, docs, and operational endpoints under one framework.
+  </p>
+</section>
+
+<section class="feature-grid">
+  <% for (NSDictionary *item in [ctx objectForKey:@"showcaseItems"]) { %>
+  <article class="feature-card reveal">
+    <h2><%= [item objectForKey:@"title"] %></h2>
+    <p><%= [item objectForKey:@"description"] %></p>
+    <a class="btn btn-link" href="<%= [item objectForKey:@"link"] %>">Open</a>
+  </article>
+  <% } %>
+</section>
+
+<section class="section-block reveal">
+  <h2>What this demonstrates</h2>
+  <ul>
+    <li>Route-to-controller structure that remains readable at scale.</li>
+    <li>Compiled templates and shared layout primitives for consistent UX.</li>
+    <li>One cohesive runtime for product pages, docs, and application endpoints.</li>
+  </ul>
+</section>

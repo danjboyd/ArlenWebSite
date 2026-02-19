@@ -1,0 +1,15 @@
+/build/
+/tmp/
+/.boomhauer/
+*.log
+*.pid
+
+# Local environment files and credentials
+.env
+.env.*
+vars.sh
+secrets/
+*.pem
+*.key
+*.p12
+*.crt

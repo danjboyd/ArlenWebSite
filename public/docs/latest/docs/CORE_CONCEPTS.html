@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/CORE_CONCEPTS</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/CORE_CONCEPTS</h1>
+</header>
+<h1 id="core-concepts">Core Concepts</h1>
+<p>This guide explains Arlen's runtime model at a high level.</p>
+<h2 id="1-request-lifecycle">1. Request Lifecycle</h2>
+<ol type="1">
+<li><code>ALNHTTPServer</code> accepts an HTTP request.</li>
+<li>Request is parsed into <code>ALNRequest</code>.</li>
+<li><code>ALNRouter</code> matches method/path to a route.</li>
+<li><code>ALNApplication</code> dispatches to controller action.</li>
+<li>Controller writes response directly or returns
+<code>NSDictionary</code>/<code>NSArray</code> for implicit JSON.</li>
+<li><code>ALNResponse</code> is serialized and sent.</li>
+</ol>
+<h2 id="2-core-types">2. Core Types</h2>
+<ul>
+<li><code>ALNApplication</code>: app composition root; owns routes,
+config, middleware.</li>
+<li><code>ALNHTTPServer</code>: network loop and request handling.</li>
+<li><code>ALNRouter</code> / <code>ALNRoute</code>: route registration
+and matching.</li>
+<li><code>ALNController</code>: base controller with render
+helpers.</li>
+<li><code>ALNContext</code>: request-scoped object
+(<code>request</code>, <code>response</code>, <code>params</code>,
+<code>stash</code>, logging/perf references).</li>
+<li><code>ALNRequest</code>: parsed request model.</li>
+<li><code>ALNResponse</code>: mutable response builder.</li>
+</ul>
+<h2 id="3-eoc-templates">3. EOC Templates</h2>
+<p>Template extension:</p>
+<ul>
+<li><code>.html.eoc</code></li>
+</ul>
+<p>Supported tags:</p>
+<ul>
+<li><code>&lt;% code %&gt;</code>: Objective-C statements</li>
+<li><code>&lt;%= expr %&gt;</code>: HTML-escaped expression output</li>
+<li><code>&lt;%== expr %&gt;</code>: raw expression output</li>
+<li><code>&lt;%# comment %&gt;</code>: ignored template comment</li>
+</ul>
+<p>Transpiler/runtime:</p>
+<ul>
+<li><code>tools/eocc</code> transpiles templates to Objective-C
+source.</li>
+<li><code>ALNEOCRuntime</code> provides rendering and include
+support.</li>
+</ul>
+<h2 id="4-json-response-behavior">4. JSON Response Behavior</h2>
+<p>If controller action returns an <code>NSDictionary</code> or
+<code>NSArray</code> and no explicit body has been committed:</p>
+<ul>
+<li>Arlen serializes it to JSON implicitly.</li>
+<li><code>Content-Type</code> is set to
+<code>application/json; charset=utf-8</code>.</li>
+<li>Controller class may override JSON options via
+<code>+jsonWritingOptions</code>.</li>
+</ul>
+<h2 id="5-configuration-model">5. Configuration Model</h2>
+<p>Config is loaded from:</p>
+<ul>
+<li><code>config/app.plist</code></li>
+<li><code>config/environments/&lt;environment&gt;.plist</code></li>
+</ul>
+<p>Environment variables may override key values
+(<code>ARLEN_*</code>).</p>
+<h2 id="6-development-vs-production-naming">6. Development vs Production
+Naming</h2>
+<ul>
+<li>Development server: <code>boomhauer</code></li>
+<li>Production process manager: <code>propane</code></li>
+<li><code>propane</code> config is called "propane accessories"</li>
+</ul>
+</main></body>
+</html>

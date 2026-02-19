@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/ARLEN_CLI_SPEC</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/ARLEN_CLI_SPEC</h1>
+</header>
+<h1 id="arlen-cli-specification-phase-1">Arlen CLI Specification (Phase
+1)</h1>
+<p>Status: Draft<br />
+Last updated: 2026-02-19</p>
+<h2 id="1-purpose">1. Purpose</h2>
+<p><code>arlen</code> is the canonical command-line interface for
+Arlen.</p>
+<p>It standardizes developer workflows for:</p>
+<ul>
+<li>creating applications</li>
+<li>generating framework artifacts</li>
+<li>running the development server (<code>boomhauer</code>)</li>
+<li>running tests and performance checks</li>
+<li>inspecting routes/config</li>
+</ul>
+<h2 id="2-design-goals">2. Design Goals</h2>
+<ol type="1">
+<li>Make full app mode the default path.</li>
+<li>Keep command behavior deterministic and scriptable.</li>
+<li>Reuse framework runtime/build tools instead of duplicating logic in
+shell scripts.</li>
+<li>Provide a lightweight onboarding path for new users.</li>
+<li>Default-first developer experience: generated apps should run on
+sane defaults with minimal code.</li>
+<li>Foundation/libs-base-first implementation: avoid re-implementing
+functionality available in GNUstep libs-base unless the existing
+behavior is too heavy or misaligned with project goals.</li>
+</ol>
+<h2 id="21-developer-experience-guardrails">2.1 Developer Experience
+Guardrails</h2>
+<ul>
+<li><code>arlen new</code> should generate an app scaffold that can run
+with minimal edits.</li>
+<li><code>arlen boomhauer</code> should prefer convention defaults
+(<code>development</code>, configured host/port) and require no extra
+options for common workflows.</li>
+<li>Generated skeletons should keep HTTP/runtime internals in framework
+code, not app entrypoints.</li>
+<li>Advanced options should be opt-in and additive, not required for
+baseline usage.</li>
+</ul>
+<h2 id="3-command-structure">3. Command Structure</h2>
+<pre class="text"><code>arlen &lt;command&gt; [subcommand] [options]</code></pre>
+<p>Core command groups:</p>
+<ul>
+<li><code>new</code></li>
+<li><code>generate</code></li>
+<li><code>boomhauer</code></li>
+<li><code>routes</code></li>
+<li><code>test</code></li>
+<li><code>perf</code></li>
+<li><code>build</code></li>
+<li><code>config</code></li>
+</ul>
+<h2 id="4-phase-1-commands">4. Phase 1 Commands</h2>
+<h3 id="41-arlen-new">4.1 <code>arlen new</code></h3>
+<p>Create a new application.</p>
+<p>Default behavior:</p>
+<ul>
+<li><code>arlen new MyApp</code> creates a full app skeleton.</li>
+</ul>
+<p>Options:</p>
+<ul>
+<li><code>--full</code> explicitly request full app skeleton.</li>
+<li><code>--lite</code> create a single-file lite app scaffold.</li>
+<li><code>--force</code> overwrite existing target directory.</li>
+<li><code>--help</code> / <code>-h</code> show command usage.</li>
+<li><code>--template &lt;name&gt;</code> optional starter
+variation.</li>
+</ul>
+<h3 id="42-arlen-generate">4.2 <code>arlen generate</code></h3>
+<p>Scaffold framework components inside an app.</p>
+<p>Phase 1 generators:</p>
+<ul>
+<li><code>controller &lt;Name&gt;</code></li>
+<li><code>model &lt;Name&gt;</code> (repository-oriented skeleton, not
+ORM-dependent)</li>
+<li><code>migration &lt;Name&gt;</code> (placeholder format; db-specific
+execution may be Phase 2)</li>
+<li><code>test &lt;Name&gt;</code></li>
+<li><code>--help</code> / <code>-h</code> show command usage.</li>
+</ul>
+<h3 id="43-arlen-boomhauer">4.3 <code>arlen boomhauer</code></h3>
+<p>Run the development server.</p>
+<p>Behavior:</p>
+<ul>
+<li>delegates to framework <code>bin/boomhauer</code> using resolved
+app/framework roots</li>
+<li>defaults to watch mode</li>
+<li>forwards boomhauer server args (<code>--watch</code>,
+<code>--no-watch</code>, <code>--prepare-only</code>,
+<code>--port</code>, <code>--host</code>, <code>--env</code>,
+<code>--once</code>, <code>--print-routes</code>)</li>
+<li>build/transpile/compile reload failures are rendered via boomhauer
+diagnostics rather than crashing the supervisor</li>
+</ul>
+<h3 id="44-arlen-routes">4.4 <code>arlen routes</code></h3>
+<p>Print resolved route table in registration order and priority
+resolution details.</p>
+<p>Output fields:</p>
+<ul>
+<li>method</li>
+<li>path pattern</li>
+<li>target controller/action</li>
+<li>route name (if any)</li>
+</ul>
+<h3 id="45-arlen-test">4.5 <code>arlen test</code></h3>
+<p>Run test suites using GNUstep XCTest tooling.</p>
+<p>Default:</p>
+<ul>
+<li>unit + integration tests</li>
+</ul>
+<p>Options:</p>
+<ul>
+<li><code>--unit</code></li>
+<li><code>--integration</code></li>
+<li><code>--all</code></li>
+</ul>
+<h3 id="46-arlen-perf">4.6 <code>arlen perf</code></h3>
+<p>Run performance suite and emit benchmark artifacts.</p>
+<p>Outputs:</p>
+<ul>
+<li>console summary</li>
+<li>JSON report under <code>build/perf/</code></li>
+<li>optional CSV</li>
+</ul>
+<h3 id="47-arlen-build">4.7 <code>arlen build</code></h3>
+<p>Compile app/runtime artifacts for the active environment.</p>
+<h3 id="48-arlen-config">4.8 <code>arlen config</code></h3>
+<p>Inspect merged runtime configuration.</p>
+<p>Options:</p>
+<ul>
+<li><code>--env &lt;environment&gt;</code></li>
+<li><code>--json</code></li>
+</ul>
+<h2 id="5-project-awareness">5. Project Awareness</h2>
+<p><code>arlen</code> operates in two modes:</p>
+<ol type="1">
+<li>Outside app directory:
+<ul>
+<li>supports <code>arlen new</code></li>
+</ul></li>
+<li>Inside app directory:
+<ul>
+<li>supports build/run/generate/test/perf/routes/config</li>
+</ul></li>
+</ol>
+<p>App root detection (Phase 1):</p>
+<ul>
+<li>presence of expected app manifest markers (to be defined in
+implementation)</li>
+<li>for app-run commands, resolve framework root by searching parent
+directories</li>
+<li>fallback to inferring framework root from the <code>arlen</code>
+executable location</li>
+<li>support explicit override via <code>ARLEN_FRAMEWORK_ROOT</code></li>
+</ul>
+<h2 id="6-full-vs-lite-handling">6. Full vs Lite Handling</h2>
+<ul>
+<li>Full mode is default for <code>arlen new</code>.</li>
+<li>Lite mode is opt-in (<code>--lite</code>).</li>
+<li>Both modes must run on the same core runtime and rendering
+stack.</li>
+<li><code>arlen boomhauer</code>, <code>arlen test</code>, and
+<code>arlen perf</code> must work for both.</li>
+</ul>
+<h2 id="7-error-handling-and-exit-codes">7. Error Handling and Exit
+Codes</h2>
+<ul>
+<li><code>0</code> success</li>
+<li><code>1</code> runtime/build/test failure</li>
+<li><code>2</code> invalid CLI usage/arguments</li>
+</ul>
+<p>All command failures should return concise actionable messages.</p>
+<h2 id="8-non-goals-phase-1">8. Non-Goals (Phase 1)</h2>
+<ul>
+<li>Plugin marketplace management</li>
+<li>Remote deployment orchestration</li>
+<li>Production process manager command (<code>arlen propane</code>)
+implementation</li>
+</ul>
+<h2 id="9-phase-2-preview">9. Phase 2 Preview</h2>
+<p>Planned additions:</p>
+<ul>
+<li><code>arlen propane</code> for production manager controls</li>
+<li>deployment helper commands</li>
+<li>richer generator templates and extension hooks</li>
+</ul>
+</main></body>
+</html>

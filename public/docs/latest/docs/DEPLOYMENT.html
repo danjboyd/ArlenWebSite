@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/DEPLOYMENT</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/DEPLOYMENT</h1>
+</header>
+<h1 id="deployment-guide-current-model">Deployment Guide (Current
+Model)</h1>
+<p>Arlen is designed for deployment behind a reverse proxy.</p>
+<h2 id="1-runtime-boundary">1. Runtime Boundary</h2>
+<ul>
+<li>Arlen handles HTTP application runtime.</li>
+<li>TLS/HTTPS termination is out of scope for framework runtime.</li>
+<li>Use nginx/apache/Caddy in front of Arlen for public ingress.</li>
+</ul>
+<h2 id="2-server-roles">2. Server Roles</h2>
+<ul>
+<li><code>boomhauer</code>: development server</li>
+<li><code>propane</code>: production manager (Phase 2A baseline)</li>
+</ul>
+<p>All production manager settings are referred to as "propane
+accessories".</p>
+<h2 id="3-recommended-production-topology">3. Recommended Production
+Topology</h2>
+<ol type="1">
+<li>Run <code>propane</code> on loopback/private network.</li>
+<li>Terminate TLS at reverse proxy.</li>
+<li>Forward proxy headers.</li>
+<li>Enable <code>trustedProxy</code> in Arlen only for trusted
+upstreams.</li>
+</ol>
+<h2 id="4-propane-quick-start">4. Propane Quick Start</h2>
+<p>From app root:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">/path/to/Arlen/bin/propane</span> <span class="at">--env</span> production</span></code></pre></div>
+<p>Signals:</p>
+<ul>
+<li><code>kill -HUP &lt;pid&gt;</code>: rolling reload</li>
+<li><code>kill -TERM &lt;pid&gt;</code>: graceful shutdown</li>
+</ul>
+<h2 id="5-example-config-with-propane-accessories">5. Example Config
+with Propane Accessories</h2>
+<pre class="plist"><code>{
+  host = &quot;127.0.0.1&quot;;
+  port = 3000;
+  logFormat = &quot;json&quot;;
+  serveStatic = NO;
+  trustedProxy = YES;
+  listenBacklog = 128;
+  connectionTimeoutSeconds = 30;
+
+  requestLimits = {
+    maxRequestLineBytes = 4096;
+    maxHeaderBytes = 32768;
+    maxBodyBytes = 1048576;
+  };
+
+  propaneAccessories = {
+    workerCount = 4;
+    gracefulShutdownSeconds = 10;
+    respawnDelayMs = 250;
+    reloadOverlapSeconds = 1;
+  };
+}</code></pre>
+<h2 id="6-operational-recommendations">6. Operational
+Recommendations</h2>
+<ul>
+<li>Keep <code>serveStatic = NO</code> in production behind reverse
+proxy/CDN.</li>
+<li>Enforce request size limits (<code>requestLimits</code>) in app
+config.</li>
+<li>Use <code>logFormat = "json"</code> for production ingest.</li>
+<li>Pin explicit propane accessories instead of relying on implicit
+defaults.</li>
+</ul>
+<h2 id="7-roadmap-target-contract-planned">7. Roadmap Target Contract
+(Planned)</h2>
+<p>The following deployment contract is accepted and tracked in roadmap
+documents. Some items are not fully implemented yet.</p>
+<ol type="1">
+<li>Packaging baseline: container-first path with first-class VM/systemd
+documentation.</li>
+<li>Artifact model: immutable release artifacts for deterministic deploy
+and rollback.</li>
+<li>Configuration model: plist + environment override runtime
+configuration, with no compile-time secrets.</li>
+<li>Migration policy: explicit <code>arlen migrate</code> deployment
+step by default.</li>
+<li>Availability baseline: zero-downtime rolling reload in
+<code>propane</code>.</li>
+<li>Health model: readiness and liveness endpoints as first-class
+production contract.</li>
+<li>Logging model: structured JSON logs to stdout/stderr in
+production.</li>
+<li>Rollback model: first-class previous-release switch and restart
+workflow.</li>
+</ol>
+<h2 id="8-current-vs-target-snapshot">8. Current vs Target Snapshot</h2>
+<table>
+<thead>
+<tr class="header">
+<th>Capability</th>
+<th>Current state</th>
+<th>Target phase</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Rolling reload in <code>propane</code></td>
+<td>Available</td>
+<td>Phase 2A (complete)</td>
+</tr>
+<tr class="even">
+<td>Immutable release artifact workflow</td>
+<td>Planned</td>
+<td>Phase 2D</td>
+</tr>
+<tr class="odd">
+<td>Explicit migration step in deploy runbook</td>
+<td>Partial (<code>arlen migrate</code> exists)</td>
+<td>Phase 2D</td>
+</tr>
+<tr class="even">
+<td>Readiness/liveness endpoint contract</td>
+<td>Planned</td>
+<td>Phase 2D</td>
+</tr>
+<tr class="odd">
+<td>Rollback runbook/automation contract</td>
+<td>Planned</td>
+<td>Phase 2D-3C</td>
+</tr>
+<tr class="even">
+<td>Container + systemd reference deployment guides</td>
+<td>Partial</td>
+<td>Phase 2D-3C</td>
+</tr>
+</tbody>
+</table>
+</main></body>
+</html>

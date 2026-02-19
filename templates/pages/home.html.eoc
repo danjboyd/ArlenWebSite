@@ -1,0 +1,151 @@
+<section class="hero">
+  <div class="hero-copy reveal">
+    <p class="eyebrow">Stable foundations. Modern web velocity.</p>
+    <h1><%= [ctx objectForKey:@"heroHeadline"] %></h1>
+    <p class="lead"><%= [ctx objectForKey:@"heroLead"] %></p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="/guides/get-started">Get Started in 5 Minutes</a>
+      <a class="btn btn-secondary" href="/docs">Read Docs</a>
+      <a class="btn btn-link" href="/download">Install Arlen</a>
+    </div>
+    <ul class="hero-trust">
+      <% for (NSDictionary *spotlight in [ctx objectForKey:@"heroSpotlights"]) { %>
+      <li>
+        <button
+          type="button"
+          class="feature-chip"
+          data-spotlight-open="<%= [spotlight objectForKey:@"id"] %>"
+          aria-haspopup="dialog"
+          aria-controls="feature-spotlight-modal">
+          <%= [spotlight objectForKey:@"label"] %>
+        </button>
+      </li>
+      <% } %>
+    </ul>
+    <p class="hero-trust-hint">Click a capability chip to see why it matters.</p>
+  </div>
+
+  <aside class="hero-card hero-demo reveal reveal-delay-1">
+    <p class="eyebrow">Start in 60 seconds</p>
+    <h2>Modern workflow, familiar MVC.</h2>
+    <pre><code><%= [ctx objectForKey:@"quickstartCommand"] %></code></pre>
+    <ul class="hero-demo-points">
+      <% for (NSString *point in [ctx objectForKey:@"heroDemoPoints"]) { %>
+      <li><%= point %></li>
+      <% } %>
+    </ul>
+    <p class="hero-footnote"><%= [ctx objectForKey:@"alleyLine"] %></p>
+  </aside>
+</section>
+
+<section class="proof-strip reveal">
+  <% for (NSString *item in [ctx objectForKey:@"proofItems"]) { %>
+  <p><%= item %></p>
+  <% } %>
+</section>
+
+<section class="feature-spotlight-modal" id="feature-spotlight-modal" data-spotlight-root hidden>
+  <button type="button" class="spotlight-backdrop" data-spotlight-close tabindex="-1" aria-hidden="true"></button>
+  <div class="spotlight-dialog" role="dialog" aria-modal="true" aria-label="Feature code spotlight" tabindex="-1">
+    <button type="button" class="spotlight-close" data-spotlight-close aria-label="Close feature details">
+      Close
+    </button>
+    <% for (NSDictionary *spotlight in [ctx objectForKey:@"heroSpotlights"]) { %>
+    <article
+      class="spotlight-panel <%= [[spotlight objectForKey:@"id"] isEqualToString:@"convention"] ? @"is-active" : @"" %>"
+      data-spotlight-panel="<%= [spotlight objectForKey:@"id"] %>">
+      <p class="eyebrow">Feature spotlight</p>
+      <h3><%= [spotlight objectForKey:@"title"] %></h3>
+      <p class="spotlight-outcome"><%= [spotlight objectForKey:@"outcome"] %></p>
+      <pre><code><%= [spotlight objectForKey:@"code"] %></code></pre>
+      <a class="btn btn-secondary spotlight-doc-link" href="<%= [spotlight objectForKey:@"docsHref"] %>">
+        <%= [spotlight objectForKey:@"docsLabel"] %>
+      </a>
+    </article>
+    <% } %>
+  </div>
+</section>
+
+<section class="section-block">
+  <div class="section-head reveal">
+    <p class="eyebrow">Top Features</p>
+    <h2>Propane accessories, product outcomes</h2>
+  </div>
+  <div class="feature-grid">
+    <% for (NSDictionary *feature in [ctx objectForKey:@"featureSet"]) { %>
+    <article class="feature-card reveal">
+      <p class="feature-tag"><%= [feature objectForKey:@"tag"] %></p>
+      <h3><%= [feature objectForKey:@"title"] %></h3>
+      <p><%= [feature objectForKey:@"description"] %></p>
+    </article>
+    <% } %>
+  </div>
+</section>
+
+<section class="section-block modern">
+  <div class="section-head reveal">
+    <p class="eyebrow">Modern by Design</p>
+    <h2>Built for today&rsquo;s web development process</h2>
+  </div>
+  <div class="workflow-grid">
+    <% for (NSDictionary *pillar in [ctx objectForKey:@"workflowPillars"]) { %>
+    <article class="workflow-card reveal">
+      <h3><%= [pillar objectForKey:@"title"] %></h3>
+      <p><%= [pillar objectForKey:@"description"] %></p>
+    </article>
+    <% } %>
+  </div>
+</section>
+
+<section class="section-block code-lab">
+  <div class="section-head reveal">
+    <p class="eyebrow">See the Stack</p>
+    <h2>One request path, multiple clean primitives</h2>
+  </div>
+  <div class="code-tabs reveal" data-code-tabs>
+    <div class="tab-row" role="tablist" aria-label="Arlen code samples">
+      <% for (NSDictionary *sample in [ctx objectForKey:@"codeSamples"]) { %>
+      <button
+        type="button"
+        class="code-tab <%= [[sample objectForKey:@"id"] isEqualToString:@"controller"] ? @"is-active" : @"" %>"
+        role="tab"
+        aria-selected="<%= [[sample objectForKey:@"id"] isEqualToString:@"controller"] ? @"true" : @"false" %>"
+        data-tab-id="<%= [sample objectForKey:@"id"] %>">
+        <%= [sample objectForKey:@"label"] %>
+      </button>
+      <% } %>
+    </div>
+    <div class="tab-panels">
+      <% for (NSDictionary *sample in [ctx objectForKey:@"codeSamples"]) { %>
+      <pre class="code-panel <%= [[sample objectForKey:@"id"] isEqualToString:@"controller"] ? @"is-active" : @"" %>" data-tab-panel="<%= [sample objectForKey:@"id"] %>"><code><%= [sample objectForKey:@"code"] %></code></pre>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+<section class="section-block comparison">
+  <div class="section-head reveal">
+    <p class="eyebrow">Positioning</p>
+    <h2>Modern MVC energy, Cocoa stability, pragmatic execution</h2>
+  </div>
+  <div class="comparison-table-wrap reveal">
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Arlen</th>
+          <th>Typical alternatives</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% for (NSDictionary *row in [ctx objectForKey:@"comparisonRows"]) { %>
+        <tr>
+          <th><%= [row objectForKey:@"topic"] %></th>
+          <td><%= [row objectForKey:@"arlen"] %></td>
+          <td><%= [row objectForKey:@"typical"] %></td>
+        </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</section>

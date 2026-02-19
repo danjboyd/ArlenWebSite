@@ -1,0 +1,7 @@
+<nav class="nav-links" aria-label="Main navigation">
+  <a class="<%= [[ctx objectForKey:@"activeNav"] isEqualToString:@"home"] ? @"is-active" : @"" %>" href="/">Overview</a>
+  <a class="<%= [[ctx objectForKey:@"activeNav"] isEqualToString:@"docs"] ? @"is-active" : @"" %>" href="/docs">Docs</a>
+  <a class="<%= [[ctx objectForKey:@"activeNav"] isEqualToString:@"guides"] ? @"is-active" : @"" %>" href="/guides/get-started">Get Started</a>
+  <a class="<%= [[ctx objectForKey:@"activeNav"] isEqualToString:@"examples"] ? @"is-active" : @"" %>" href="/examples">Showcase</a>
+  <a class="<%= [[ctx objectForKey:@"activeNav"] isEqualToString:@"download"] ? @"is-active" : @"" %>" href="/download">Install</a>
+</nav>

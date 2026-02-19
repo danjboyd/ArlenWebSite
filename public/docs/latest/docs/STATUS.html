@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/STATUS</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/STATUS</h1>
+</header>
+<h1 id="arlen-status-checkpoint">Arlen Status Checkpoint</h1>
+<p>Last updated: 2026-02-19</p>
+<h2 id="current-milestone-state">Current Milestone State</h2>
+<ul>
+<li>Phase 1: complete</li>
+<li>Phase 2A: complete</li>
+<li>Phase 2B: complete</li>
+<li>Phase 2C: complete (2026-02-19)</li>
+<li>Phase 2D: planned (next)</li>
+<li>Phase 3: planned</li>
+</ul>
+<h2 id="completed-today-2026-02-19">Completed Today (2026-02-19)</h2>
+<ul>
+<li>Established parity planning baseline:
+<ul>
+<li>frozen Mojolicious baseline at <code>9.42</code></li>
+<li>capability-level parity model (Cocoa-forward APIs)</li>
+<li>explicit feature classification buckets (<code>In Scope</code>,
+<code>Deferred</code>, <code>Out of Scope</code>)</li>
+</ul></li>
+<li>Added <code>docs/FEATURE_PARITY_MATRIX.md</code> with:
+<ul>
+<li>Mojolicious feature classification</li>
+<li>competitor-inspired feature classification (Rails, Phoenix,
+FastAPI)</li>
+<li>agreed <code>boomhauer</code> compile-failure UX contract</li>
+<li>agreed compiled deployment contract</li>
+<li>required refactor tracks</li>
+</ul></li>
+<li>Updated roadmap docs (<code>Phase 2</code>, <code>Phase 3</code>,
+and combined index) to include parity and deployment tracks.</li>
+<li>Integrated performance gap-closure planning into Phase 2/3 rollout
+docs:
+<ul>
+<li>Phase 2C: stage timing coverage + <code>performanceLogging</code>
+runtime enforcement</li>
+<li>Phase 2D: mandatory CI perf gate, expanded perf guardrails, baseline
+governance</li>
+<li>Phase 3C: trend analysis and expanded workload profiles</li>
+</ul></li>
+<li>Executed Phase 2C implementation:
+<ul>
+<li><code>boomhauer</code> watch mode now survives transpile/compile
+failures and serves rich dev diagnostics (HTML + JSON)</li>
+<li>production-safe structured error payloads with correlation/request
+IDs</li>
+<li>unified params and validation helpers with standardized
+<code>422</code> API response shape</li>
+<li>request parse + response-write timing instrumentation, wired to
+<code>performanceLogging</code></li>
+<li>regression coverage for compile-failure recovery, validation
+contract, and timing-header toggles</li>
+</ul></li>
+</ul>
+<h2 id="verification-state">Verification State</h2>
+<ul>
+<li><code>make test-unit</code>: passing (2026-02-19)</li>
+<li><code>make test-integration</code>: passing (2026-02-19)</li>
+<li>PostgreSQL-backed tests are gated by <code>ARLEN_PG_TEST_DSN</code>
+in this environment.</li>
+</ul>
+<h2 id="first-tasks-for-next-session">First Tasks For Next Session</h2>
+<ol type="1">
+<li>Start Phase 2D implementation:
+<ul>
+<li>complete remaining in-scope parity capabilities from
+<code>docs/FEATURE_PARITY_MATRIX.md</code></li>
+<li>finalize explicit in-scope/deferred/out-of-scope rationale
+coverage</li>
+</ul></li>
+<li>Deliver compiled deployment baseline artifacts and runbooks:
+<ul>
+<li>immutable release artifact layout</li>
+<li>explicit migrate/health/rollback workflow</li>
+</ul></li>
+<li>Add <code>make check</code> CI path with mandatory perf gate
+execution and baseline governance workflow.</li>
+<li>Expand perf gates to include endpoint latency, throughput floor, and
+memory growth guardrails.</li>
+</ol>
+</main></body>
+</html>

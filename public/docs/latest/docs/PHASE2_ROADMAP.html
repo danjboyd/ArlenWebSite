@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/PHASE2_ROADMAP</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/PHASE2_ROADMAP</h1>
+</header>
+<h1 id="arlen-phase-2-roadmap">Arlen Phase 2 Roadmap</h1>
+<p>Status: Phase 2A, Phase 2B, and Phase 2C complete; Phase 2D planned
+(next)<br />
+Last updated: 2026-02-19</p>
+<p>Related docs:</p>
+<ul>
+<li><code>docs/PHASE1_SPEC.md</code></li>
+<li><code>docs/ARLEN_CLI_SPEC.md</code></li>
+<li><code>docs/FEATURE_PARITY_MATRIX.md</code></li>
+<li><code>docs/PHASE3_ROADMAP.md</code></li>
+<li><code>docs/DEPLOYMENT.md</code></li>
+</ul>
+<h2 id="1-objective">1. Objective</h2>
+<p>Close adoption-critical gaps so teams can run Arlen in production
+behind a reverse proxy with confidence, while establishing a
+behavior-level parity baseline with Mojolicious for in-scope
+features.</p>
+<h2 id="2-scope-summary">2. Scope Summary</h2>
+<ol type="1">
+<li><code>propane</code> production server and worker lifecycle.</li>
+<li>Production concurrency model and connection lifecycle controls.</li>
+<li>HTTP completeness for common API workloads.</li>
+<li>PostgreSQL-first data layer (<code>Arlen::Pg</code> analog).</li>
+<li>Session/auth/security baseline.</li>
+<li>Error experience and request validation ergonomics.</li>
+<li><code>boomhauer</code> compile-failure developer UX (non-crashing,
+rich diagnostics).</li>
+<li>Compiled deployment contract baseline (release artifacts, migrate,
+health, rollback).</li>
+<li>Performance instrumentation and regression-gate hardening.</li>
+</ol>
+<h2 id="3-milestones">3. Milestones</h2>
+<h2 id="31-phase-2a-runtime-foundation-completed-2026-02-18">3.1 Phase
+2A: Runtime Foundation (Completed 2026-02-18)</h2>
+<p>Delivered:</p>
+<ul>
+<li>Implemented <code>propane</code> prefork process manager.</li>
+<li>Added "propane accessories" config surface in app config + env
+overrides.</li>
+<li>Added graceful shutdown/reload and worker restart on crash.</li>
+<li>Added connection timeout and accept-loop back-pressure
+controls.</li>
+<li>Hardened request lifecycle with runtime limits and timeout
+handling.</li>
+</ul>
+<p>Acceptance (met):</p>
+<ul>
+<li>Multi-worker integration tests pass.</li>
+<li>Graceful reload integration test passes under synthetic
+traffic.</li>
+<li>Crash/restart recovery integration test passes.</li>
+</ul>
+<h2 id="32-phase-2b-data--security-core-completed-2026-02-18">3.2 Phase
+2B: Data + Security Core (Completed 2026-02-18)</h2>
+<p>Delivered:</p>
+<ul>
+<li>Implemented <code>ALNPg</code> core adapter:
+<ul>
+<li>explicit SQL + bind params</li>
+<li>prepared statements</li>
+<li>connection pooling</li>
+<li>transaction helpers</li>
+</ul></li>
+<li>Added migration runner integration in <code>arlen</code> CLI:
+<ul>
+<li><code>arlen migrate [--env &lt;name&gt;] [--dsn &lt;connection_string&gt;] [--dry-run]</code></li>
+</ul></li>
+<li>Added cookie-session middleware and CSRF middleware.</li>
+<li>Added baseline rate-limiting middleware.</li>
+<li>Added security-header middleware with defaults enabled.</li>
+<li>Added built-in middleware auto-registration from app config.</li>
+<li>Added PostgreSQL unit/integration coverage (gated by
+<code>ARLEN_PG_TEST_DSN</code> for DB-backed cases).</li>
+</ul>
+<p>SQL builder policy in Phase 2:</p>
+<ul>
+<li>Do not block this milestone on a full SQL abstraction DSL.</li>
+<li>Keep raw SQL as first-class API.</li>
+<li>Design DB interfaces so an optional SQL builder can be added in
+Phase 3.</li>
+</ul>
+<p>GDL2 placement in Phase 2:</p>
+<ul>
+<li>No core dependency added in Phase 2B.</li>
+<li>Explicit SQL via <code>ALNPg</code> remains the default and
+first-class path.</li>
+<li>GDL2 feasibility work remains scoped as optional follow-up and is
+tracked for Phase 3.</li>
+</ul>
+<p>Acceptance (met):</p>
+<ul>
+<li>PostgreSQL integration tests pass when
+<code>ARLEN_PG_TEST_DSN</code> is set.</li>
+<li>Session + CSRF middleware regression tests pass.</li>
+<li>CSRF rejection and rate-limit regression tests pass.</li>
+<li>Security-header middleware tests pass.</li>
+</ul>
+<h2
+id="33-phase-2c-developer-experience-hardening-completed-2026-02-19">3.3
+Phase 2C: Developer Experience Hardening (Completed 2026-02-19)</h2>
+<p>Delivered:</p>
+<ul>
+<li>Rich development exception page with template/stack mapping.</li>
+<li><code>boomhauer</code> compile-failure behavior contract:
+<ul>
+<li>reload compile failures must not crash <code>boomhauer</code></li>
+<li>unified rendering for EOC transpile and Objective-C compile/link
+failures</li>
+<li>HTML error page for browser requests</li>
+<li>structured JSON error payload for API-oriented requests</li>
+<li>diagnostics include stage, command, exit code, file/line/column, and
+source snippets when available</li>
+<li>warnings are visible but collapsed by default</li>
+</ul></li>
+<li>Production-safe structured errors with correlation IDs.</li>
+<li>Unified parameter access and explicit validation helpers.</li>
+<li>Standardized <code>4xx</code> validation error shape for API
+responses.</li>
+<li>Close runtime timing coverage gaps:
+<ul>
+<li>add request <code>parse</code> and <code>response_write</code> stage
+timings</li>
+<li>keep per-request timing keys deterministic across
+dynamic/static/error paths</li>
+</ul></li>
+<li>Enforce <code>performanceLogging</code> runtime switch:
+<ul>
+<li>when enabled, include timing headers and timing log payloads</li>
+<li>when disabled, skip timing headers/payloads and stage timing
+overhead where practical</li>
+</ul></li>
+</ul>
+<p>Acceptance (met):</p>
+<ul>
+<li>Compile-failure recovery tests pass (server remains alive and
+self-recovers after source fix).</li>
+<li>Error-page and JSON error contract tests pass.</li>
+<li>Production structured-error contract tests pass.</li>
+<li>Validation coercion/rejection tests pass.</li>
+<li>Stage timing contract tests pass for dynamic/static/error request
+paths.</li>
+<li><code>performanceLogging</code> on/off behavior tests pass for
+headers and log payload shape.</li>
+</ul>
+<p>Verification snapshot (2026-02-19):</p>
+<ul>
+<li><code>make test-unit</code> passed.</li>
+<li><code>make test-integration</code> passed.</li>
+</ul>
+<h2 id="34-phase-2d-parity-baseline--deployment-contract">3.4 Phase 2D:
+Parity Baseline + Deployment Contract</h2>
+<p>Deliverables:</p>
+<ul>
+<li>Implement remaining Phase 2 in-scope parity capabilities from
+<code>docs/FEATURE_PARITY_MATRIX.md</code>:
+<ul>
+<li>nested route groups/guards/conditions</li>
+<li>content negotiation and format-aware rendering paths</li>
+<li>API-only mode defaults</li>
+<li>baseline testing helpers for HTTP/JSON flows</li>
+</ul></li>
+<li>Establish compiled deployment baseline:
+<ul>
+<li>immutable release artifact layout</li>
+<li>explicit migration step in deployment workflow</li>
+<li>readiness and liveness endpoints</li>
+<li>production JSON logging defaults</li>
+<li>rollback workflow via previous release artifact selection</li>
+</ul></li>
+<li>Publish first deployment runbooks:
+<ul>
+<li>container-first path</li>
+<li>VM/systemd path</li>
+</ul></li>
+<li>Harden performance regression execution:
+<ul>
+<li>add a <code>make check</code> path that runs unit + integration +
+perf gates</li>
+<li>keep local fast path available while making perf gate mandatory for
+CI/release validation</li>
+<li>expand perf gate coverage beyond <code>root_p95_ms</code> to include
+endpoint p95, throughput floor, and memory growth guardrails</li>
+<li>run benchmark scenarios with repeated runs and median-based
+comparison to reduce noise</li>
+<li>require baseline metadata and explicit baseline update policy</li>
+</ul></li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Phase 2 parity checklist items are implemented, deferred, or
+out-of-scope with explicit rationale.</li>
+<li>Deployment smoke tests pass for release artifact boot, migration
+step, health checks, and rollback.</li>
+<li>Rolling reload behavior under <code>propane</code> is validated with
+integration tests.</li>
+<li><code>make check</code> execution path passes in CI environment with
+perf gate enabled.</li>
+<li>Perf harness regression tests validate endpoint latency, throughput,
+and memory guardrail behavior.</li>
+<li>Baseline refresh/update workflow is documented and enforced in
+review checklist.</li>
+</ul>
+<h2 id="4-key-decisions-phase-2">4. Key Decisions (Phase 2)</h2>
+<ol type="1">
+<li><p>Runtime model: prefork vs threaded.<br />
+Recommendation: prefork first for failure isolation and operational
+simplicity.</p></li>
+<li><p>Database-first target.<br />
+Recommendation: PostgreSQL first via <code>ALNPg</code>.</p></li>
+<li><p>SQL abstraction timing.<br />
+Recommendation: explicit SQL first; optional builder in Phase
+3.</p></li>
+<li><p>GDL2 scope.<br />
+Recommendation: feasibility spike in 2B, full support deferred to Phase
+3.</p></li>
+<li><p>Parity model.<br />
+Recommendation: behavior/capability parity for in-scope Mojolicious
+features, Cocoa-forward APIs.</p></li>
+<li><p>Developer compile-failure UX in <code>boomhauer</code>.<br />
+Recommendation: fail-safe dev server with rich HTML/JSON diagnostics
+instead of process crash.</p></li>
+<li><p>Compiled deployment model.<br />
+Recommendation: container-first with first-class VM/systemd support,
+immutable release artifacts, explicit migrate step, health endpoints,
+and rollback contract.</p></li>
+<li><p>Performance gate enforcement.<br />
+Recommendation: make perf regression checks release-blocking in CI while
+preserving an explicit fast local developer path.</p></li>
+</ol>
+<h2 id="5-performance-and-quality-gates">5. Performance and Quality
+Gates</h2>
+<ul>
+<li>Unit + integration + stress tests for every subsystem.</li>
+<li>Benchmark output archived per CI run.</li>
+<li>Regression budgets for latency/throughput/memory.</li>
+<li>Security regressions for parser/session/CSRF/rate-limit
+features.</li>
+<li>Compile-failure and structured-error contract regression tests for
+<code>boomhauer</code> and production paths.</li>
+<li>Capability-to-tests parity mapping for all in-scope Phase 2 parity
+items.</li>
+<li>Mandatory CI/release execution of perf regression gate via
+<code>make check</code>.</li>
+<li>Perf budgets include endpoint p95, throughput floor, and memory
+growth constraints.</li>
+</ul>
+<h2 id="6-planned-refactor-tracks">6. Planned Refactor Tracks</h2>
+<ol type="1">
+<li>Split <code>boomhauer</code> supervisor from build/worker execution
+path to guarantee non-crashing reload behavior.</li>
+<li>Normalize error payload structures across
+transpiler/runtime/compiler failure surfaces.</li>
+<li>Refactor route internals to support grouped routes, guards, and
+conditions without breaking existing route registration contracts.</li>
+<li>Add reusable validation primitives and shared serialization for
+validation error responses.</li>
+<li>Add explicit parse/write timing instrumentation points in HTTP
+request lifecycle code paths.</li>
+<li>Wire <code>performanceLogging</code> configuration into runtime
+timing headers/log payload behavior.</li>
+</ol>
+</main></body>
+</html>

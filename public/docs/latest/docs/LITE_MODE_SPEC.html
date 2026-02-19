@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/LITE_MODE_SPEC</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/LITE_MODE_SPEC</h1>
+</header>
+<h1 id="lite-mode-specification-phase-1">Lite Mode Specification (Phase
+1)</h1>
+<p>Status: Draft<br />
+Last updated: 2026-02-18</p>
+<h2 id="1-purpose">1. Purpose</h2>
+<p>Define a lightweight application mode ("lite") for rapid prototyping
+while keeping full app mode as the default for serious deployments.</p>
+<p>Lite mode must not be a separate runtime.</p>
+<h2 id="2-core-principle">2. Core Principle</h2>
+<p>Lite mode is syntax sugar over the same core components used by full
+applications:</p>
+<ul>
+<li>same HTTP stack</li>
+<li>same router</li>
+<li>same controller/response behavior</li>
+<li>same EOC rendering pipeline</li>
+<li>same middleware model</li>
+</ul>
+<p>No divergence in runtime semantics between full and lite modes.</p>
+<h2 id="3-positioning">3. Positioning</h2>
+<ul>
+<li>Full mode: default and recommended for production applications.</li>
+<li>Lite mode: quick prototypes, demos, docs snippets, and minimal
+internal tools.</li>
+</ul>
+<h2 id="4-file-and-structure-model">4. File and Structure Model</h2>
+<p>Phase 1 lite app shape:</p>
+<ul>
+<li>one primary entry file (for example <code>app_lite.m</code>)</li>
+<li>optional <code>templates/</code> directory for
+<code>.html.eoc</code> files</li>
+<li>optional <code>config/</code> for overrides</li>
+</ul>
+<p>Lite apps may remain single-file, but can grow into directories
+without changing runtime model.</p>
+<h2 id="5-runtime-features-required-in-lite-mode">5. Runtime Features
+Required in Lite Mode</h2>
+<ol type="1">
+<li>Route definitions (method + path)</li>
+<li>Handler execution with request context</li>
+<li>Template rendering via EOC</li>
+<li>Explicit and implicit JSON responses</li>
+<li>Middleware registration</li>
+<li>Boomhauer development server launch</li>
+</ol>
+<h2 id="6-json-behavior-in-lite-mode">6. JSON Behavior in Lite Mode</h2>
+<p>Must match full mode exactly:</p>
+<ul>
+<li>handler return <code>NSDictionary</code>/<code>NSArray</code>
+triggers implicit JSON response</li>
+<li><code>Content-Type: application/json; charset=utf-8</code></li>
+<li>status defaults to <code>200</code> unless set</li>
+</ul>
+<p>No lite-specific JSON semantics.</p>
+<h2 id="7-arlen-integration">7. Arlen Integration</h2>
+<p>Lite creation and operation:</p>
+<ul>
+<li><code>arlen new MyApp --lite</code></li>
+<li><code>arlen boomhauer</code></li>
+<li><code>arlen test</code></li>
+<li><code>arlen perf</code></li>
+</ul>
+<p>All commands should work with minimal lite-specific branching.</p>
+<h2 id="8-migration-path-lite---full">8. Migration Path: Lite -&gt;
+Full</h2>
+<p>Phase 1 must support straightforward migration:</p>
+<ol type="1">
+<li><code>arlen generate</code> adds controller/model/test
+structure.</li>
+<li>Route declarations move from inline style to full app
+structure.</li>
+<li>Existing templates and middleware remain reusable.</li>
+</ol>
+<p>Goal: no rewrite required, only structural refactor.</p>
+<h2 id="9-limitations-in-phase-1">9. Limitations in Phase 1</h2>
+<ul>
+<li>No separate optimization path for lite.</li>
+<li>No runtime behavior unavailable in full mode.</li>
+<li>Lite-specific DSL features should be minimal and explicit.</li>
+</ul>
+<h2 id="10-non-goals">10. Non-Goals</h2>
+<ul>
+<li>Supporting contradictory behavior between lite and full.</li>
+<li>Building a distinct "micro framework" product.</li>
+</ul>
+<h2 id="11-acceptance-criteria">11. Acceptance Criteria</h2>
+<p>Lite mode is acceptable in Phase 1 when:</p>
+<ol type="1">
+<li>A one-file app can serve at least two routes.</li>
+<li>EOC template rendering works.</li>
+<li>Implicit JSON return behavior works.</li>
+<li>Same tests for equivalent full-mode behavior pass.</li>
+<li>App can be moved to full structure without runtime rewrites.</li>
+</ol>
+</main></body>
+</html>

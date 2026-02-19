@@ -1,0 +1,34 @@
+<section class="page-hero reveal">
+  <p class="eyebrow">Install</p>
+  <h1>Download and run Arlen</h1>
+  <p class="lead">
+    Install from source, scaffold a new app, and ship with a predictable CLI-first workflow.
+  </p>
+</section>
+
+<section class="steps-grid">
+  <article class="step-card reveal">
+    <h2>Clone and build Arlen</h2>
+    <pre><code><%= [ctx objectForKey:@"cloneCommand"] %></code></pre>
+  </article>
+
+  <article class="step-card reveal reveal-delay-1">
+    <h2>Create your first app</h2>
+    <pre><code><%= [ctx objectForKey:@"scaffoldCommand"] %></code></pre>
+  </article>
+
+  <article class="step-card reveal reveal-delay-2">
+    <h2>Serve your app</h2>
+    <pre><code><%= [ctx objectForKey:@"serveCommand"] %></code></pre>
+  </article>
+</section>
+
+<section class="section-block reveal">
+  <h2>Production path</h2>
+  <p>
+    Use `propane` for worker management, graceful restarts, and predictable production controls.
+  </p>
+  <p>
+    Pair `propane` with your preferred process supervisor and deployment platform.
+  </p>
+</section>

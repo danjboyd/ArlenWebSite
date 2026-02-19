@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/CLI_REFERENCE</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/CLI_REFERENCE</h1>
+</header>
+<h1 id="cli-reference">CLI Reference</h1>
+<p>This document describes the currently implemented command-line
+interfaces.</p>
+<h2 id="arlen"><code>arlen</code></h2>
+<p>Usage:</p>
+<pre class="text"><code>arlen &lt;command&gt; [options]</code></pre>
+<p>Commands:</p>
+<h3
+id="arlen-new-appname---full--lite---force"><code>arlen new &lt;AppName&gt; [--full|--lite] [--force]</code></h3>
+<p>Create a new app scaffold.</p>
+<ul>
+<li><code>--full</code>: full app scaffold (default)</li>
+<li><code>--lite</code>: single-file lite scaffold</li>
+<li><code>--force</code>: overwrite existing files where allowed</li>
+<li><code>--help</code> / <code>-h</code>: show command usage</li>
+</ul>
+<h3
+id="arlen-generate-controllermodelmigrationtest-name"><code>arlen generate &lt;controller|model|migration|test&gt; &lt;Name&gt;</code></h3>
+<p>Generate app artifacts.</p>
+<ul>
+<li><code>controller</code>:
+<code>src/Controllers/&lt;Name&gt;Controller.{h,m}</code></li>
+<li><code>model</code>:
+<code>src/Models/&lt;Name&gt;Repository.{h,m}</code></li>
+<li><code>migration</code>:
+<code>db/migrations/&lt;timestamp&gt;_&lt;name&gt;.sql</code></li>
+<li><code>test</code>: <code>tests/&lt;Name&gt;Tests.m</code></li>
+<li><code>--help</code> / <code>-h</code>: show command usage</li>
+</ul>
+<h3
+id="arlen-migrate---env-name---dsn-connection_string---dry-run"><code>arlen migrate [--env &lt;name&gt;] [--dsn &lt;connection_string&gt;] [--dry-run]</code></h3>
+<p>Apply SQL migrations from <code>db/migrations</code> to
+PostgreSQL.</p>
+<ul>
+<li><code>--env &lt;name&gt;</code>: select runtime environment
+(default: <code>development</code>)</li>
+<li><code>--dsn &lt;connection_string&gt;</code>: override
+<code>database.connectionString</code> from config</li>
+<li><code>--dry-run</code>: list pending migrations without
+applying</li>
+</ul>
+<h3
+id="arlen-boomhauer-server-args"><code>arlen boomhauer [server args...]</code></h3>
+<p>Build and run <code>boomhauer</code> for the current app root.</p>
+<ul>
+<li>delegates to <code>bin/boomhauer</code> with
+<code>ARLEN_APP_ROOT</code> + <code>ARLEN_FRAMEWORK_ROOT</code></li>
+<li>defaults to watch mode (same behavior as running
+<code>bin/boomhauer</code> directly)</li>
+<li>in app-root watch mode, transpile/compile failures do not terminate
+<code>boomhauer</code>; a diagnostic server is served until the next
+successful rebuild</li>
+<li>server args are passed through (for example <code>--watch</code>,
+<code>--no-watch</code>, <code>--prepare-only</code>,
+<code>--port</code>, <code>--host</code>, <code>--env</code>,
+<code>--once</code>, <code>--print-routes</code>)</li>
+</ul>
+<h3
+id="arlen-propane-manager-args"><code>arlen propane [manager args...]</code></h3>
+<p>Run the production manager (<code>propane</code>) for the current app
+root.</p>
+<ul>
+<li>manager args are forwarded to <code>bin/propane</code></li>
+<li>all production manager settings are called "propane
+accessories"</li>
+</ul>
+<h3 id="arlen-routes"><code>arlen routes</code></h3>
+<p>Build app and print resolved routes
+(<code>--print-routes</code>).</p>
+<h3
+id="arlen-test---unit--integration--all"><code>arlen test [--unit|--integration|--all]</code></h3>
+<p>Run framework tests.</p>
+<ul>
+<li>default: equivalent to <code>--all</code></li>
+</ul>
+<h3 id="arlen-perf"><code>arlen perf</code></h3>
+<p>Run performance suite.</p>
+<h3 id="arlen-build"><code>arlen build</code></h3>
+<p>Build framework targets (<code>make all</code>).</p>
+<h3
+id="arlen-config---env-name---json"><code>arlen config [--env &lt;name&gt;] [--json]</code></h3>
+<p>Load and print merged runtime config.</p>
+<ul>
+<li><code>--env &lt;name&gt;</code>: select environment overlay</li>
+<li><code>--json</code>: print as pretty JSON</li>
+</ul>
+<h2 id="boomhauer-script-binboomhauer"><code>boomhauer</code> Script
+(<code>bin/boomhauer</code>)</h2>
+<p>Usage:</p>
+<pre class="text"><code>boomhauer [options]</code></pre>
+<p>Behavior:</p>
+<ul>
+<li>If run inside an app root (<code>config/app.plist</code> plus
+<code>src/main.m</code> or <code>app_lite.m</code>), it compiles that
+app and watches for changes by default.</li>
+<li>Otherwise, it runs the framework's built-in server.</li>
+<li>In app-root watch mode, build failures are captured and rendered as
+development diagnostics:
+<ul>
+<li>browser requests receive an HTML build-error page</li>
+<li>API requests can use <code>GET /api/dev/build-error</code> for JSON
+diagnostics</li>
+<li>successful source changes automatically resume normal app
+serving</li>
+</ul></li>
+</ul>
+<p>Options:</p>
+<ul>
+<li><code>--watch</code> (default)</li>
+<li><code>--no-watch</code></li>
+<li><code>--once</code></li>
+<li><code>--prepare-only</code> (compile and exit)</li>
+<li><code>--help</code> / <code>-h</code></li>
+</ul>
+<p>Environment:</p>
+<ul>
+<li><code>ARLEN_APP_ROOT</code></li>
+<li><code>ARLEN_FRAMEWORK_ROOT</code></li>
+</ul>
+<h2 id="propane-script-binpropane"><code>propane</code> Script
+(<code>bin/propane</code>)</h2>
+<p>Usage:</p>
+<pre class="text"><code>propane [options] [-- worker-args]</code></pre>
+<p>Core options:</p>
+<ul>
+<li><code>--workers &lt;n&gt;</code></li>
+<li><code>--host &lt;addr&gt;</code></li>
+<li><code>--port &lt;port&gt;</code></li>
+<li><code>--env &lt;name&gt;</code></li>
+<li><code>--pid-file &lt;path&gt;</code></li>
+<li><code>--graceful-shutdown-seconds &lt;n&gt;</code></li>
+<li><code>--respawn-delay-ms &lt;n&gt;</code></li>
+<li><code>--reload-overlap-seconds &lt;n&gt;</code></li>
+<li><code>--listen-backlog &lt;n&gt;</code></li>
+<li><code>--connection-timeout-seconds &lt;n&gt;</code></li>
+<li><code>--no-respawn</code></li>
+</ul>
+<p>Signals:</p>
+<ul>
+<li><code>TERM</code> / <code>INT</code>: graceful shutdown</li>
+<li><code>HUP</code>: rolling worker reload</li>
+</ul>
+<h2 id="other-helper-scripts-and-build-targets">Other Helper Scripts and
+Build Targets</h2>
+<ul>
+<li><code>bin/test</code>: run test suite (<code>make test</code>)</li>
+<li><code>bin/tech-demo</code>: run technology demo app</li>
+<li><code>bin/dev</code>: alias for <code>bin/boomhauer</code></li>
+<li><code>make docs-html</code>: generate browser-friendly HTML docs
+under <code>build/docs</code></li>
+</ul>
+<h2 id="postgresql-test-gate">PostgreSQL Test Gate</h2>
+<p>DB-backed tests are skipped unless this environment variable is
+set:</p>
+<ul>
+<li><code>ARLEN_PG_TEST_DSN</code>: PostgreSQL connection string for
+migration/adapter tests</li>
+</ul>
+</main></body>
+</html>

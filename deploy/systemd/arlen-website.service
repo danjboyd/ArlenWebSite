@@ -1,0 +1,16 @@
+[Unit]
+Description=Arlen Developer Website
+After=default.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/danboyd/git/ArlenWebSite
+Environment=ARLEN_APP_ROOT=/home/danboyd/git/ArlenWebSite
+ExecStart=/usr/bin/env bash -lc 'source /usr/GNUstep/System/Library/Makefiles/GNUstep.sh && /home/danboyd/git/ArlenWebSite/vendor/Arlen/bin/arlen boomhauer --no-watch --env production --port 3015'
+Restart=always
+RestartSec=2
+TimeoutStopSec=20
+KillSignal=SIGTERM
+
+[Install]
+WantedBy=default.target

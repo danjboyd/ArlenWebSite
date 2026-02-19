@@ -1,0 +1,36 @@
+<section class="page-hero reveal">
+  <p class="eyebrow">Guide</p>
+  <h1>Get started fast</h1>
+  <p class="lead">
+    Follow the core Arlen workflow, then scale your application with the same conventions.
+  </p>
+</section>
+
+<section class="steps-grid">
+  <article class="step-card reveal">
+    <h2>1. Scaffold an app</h2>
+    <p>Initialize GNUstep tooling and generate a new Arlen project.</p>
+    <pre><code><%= [ctx objectForKey:@"setupCommand"] %></code></pre>
+  </article>
+
+  <article class="step-card reveal reveal-delay-1">
+    <h2>2. Run the app</h2>
+    <p>Use the Arlen CLI exactly as described in framework docs.</p>
+    <pre><code><%= [ctx objectForKey:@"runCommand"] %></code></pre>
+  </article>
+
+  <article class="step-card reveal reveal-delay-2">
+    <h2>3. Run migrations</h2>
+    <p>Use versioned migration commands as part of your normal development cycle.</p>
+    <pre><code><%= [ctx objectForKey:@"docsCommand"] %></code></pre>
+  </article>
+</section>
+
+<section class="section-block reveal">
+  <h2>Next routes to visit</h2>
+  <ul>
+    <li><a href="/">Landing page messaging and feature positioning</a></li>
+    <li><a href="/docs">Documentation hub</a></li>
+    <li><a href="/examples">Showcase page</a></li>
+  </ul>
+</section>

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Arlen Docs - docs/PHASE3_ROADMAP</title>
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+  </style>
+  <link rel="stylesheet" href="../style.css" />
+</head>
+<body><main>
+<header id="title-block-header">
+<h1 class="title">Arlen Docs - docs/PHASE3_ROADMAP</h1>
+</header>
+<h1 id="arlen-phase-3-roadmap">Arlen Phase 3 Roadmap</h1>
+<p>Status: Proposed with parity baseline<br />
+Last updated: 2026-02-19</p>
+<p>Related docs:</p>
+<ul>
+<li><code>docs/PHASE2_ROADMAP.md</code></li>
+<li><code>docs/FEATURE_PARITY_MATRIX.md</code></li>
+<li><code>docs/DEPLOYMENT.md</code></li>
+</ul>
+<h2 id="1-objective">1. Objective</h2>
+<p>Scale Arlen from "first production-ready" to a mature platform with
+strong observability, extensibility, and deliberate delivery of deferred
+parity capabilities.</p>
+<h2 id="2-scope-summary">2. Scope Summary</h2>
+<ol type="1">
+<li>Observability and telemetry maturity.</li>
+<li>Plugin/extension system and lifecycle hooks.</li>
+<li>Data/model layer expansion (including optional SQL builder and
+optional GDL2 adapter).</li>
+<li>Distribution and operations maturity for compiled deployments.</li>
+<li>Deferred parity capabilities (realtime, mounting, ecosystem
+services).</li>
+<li>Packaging, versioning, and onboarding maturity.</li>
+<li>Advanced performance observability and tuning on top of Phase 2
+mandatory perf gates.</li>
+</ol>
+<h2 id="3-milestones">3. Milestones</h2>
+<h2 id="31-phase-3a-observability--extensibility--api-contracts">3.1
+Phase 3A: Observability + Extensibility + API Contracts</h2>
+<p>Deliverables:</p>
+<ul>
+<li>Metrics endpoint and standardized runtime counters.</li>
+<li>Optional trace export integration (OpenTelemetry-friendly).</li>
+<li>Stable plugin API for middleware/helpers/lifecycle hooks.</li>
+<li>Explicit startup/shutdown dependency lifecycle contracts.</li>
+<li>Plugin loading/scaffolding through <code>arlen</code> CLI.</li>
+<li>OpenAPI generation for API-focused applications.</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Metrics and key counters verified in integration tests.</li>
+<li>Example plugins pass compatibility tests.</li>
+<li>Lifecycle hook contract tests pass.</li>
+<li>OpenAPI snapshot tests pass for representative apps.</li>
+</ul>
+<h2 id="32-phase-3b-data-layer-maturation">3.2 Phase 3B: Data Layer
+Maturation</h2>
+<p>Deliverables:</p>
+<ul>
+<li>Optional SQL builder (<code>ALNSQLBuilder</code>) for common
+CRUD/filter patterns.</li>
+<li>Keep raw SQL APIs first-class and always available.</li>
+<li>Productize PostgreSQL contract into an adapter model.</li>
+<li>Promote GDL2 from spike to optional adapter if Phase 2 spike is
+favorable.</li>
+<li>Add adapter conformance harness shared by all data adapters.</li>
+</ul>
+<p>GDL2 decision criteria:</p>
+<ul>
+<li>No unacceptable performance overhead for common queries.</li>
+<li>Transaction semantics align with Arlen contract.</li>
+<li>Error propagation remains predictable and debuggable.</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>SQL builder coverage tests and generated SQL snapshots.</li>
+<li>Adapter conformance test harness across <code>ALNPg</code> and GDL2
+adapter.</li>
+</ul>
+<h2
+id="33-phase-3c-distribution-release-management-and-documentation-maturity">3.3
+Phase 3C: Distribution, Release Management, and Documentation
+Maturity</h2>
+<p>Deliverables:</p>
+<ul>
+<li>Release artifact tooling and lifecycle documentation.</li>
+<li>First-class deployment runbooks for container and VM/systemd
+targets.</li>
+<li>CI performance gates with trend tracking and scenario
+expansion.</li>
+<li>Preserve Phase 2 mandatory perf gate while adding trend and drift
+analysis:
+<ul>
+<li>endpoint-level latency trend tracking
+(<code>p50</code>/<code>p95</code>/<code>p99</code>)</li>
+<li>throughput and memory trend tracking</li>
+<li>workload profile expansion for middleware-heavy and template-heavy
+scenarios</li>
+</ul></li>
+<li>Semantic versioning policy and deprecation lifecycle.</li>
+<li>Packaging/distribution docs and compatibility matrix.</li>
+<li>End-to-end cookbook sample apps and validated docs.</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Performance regression thresholds enforced in CI.</li>
+<li>Trend reports are generated and archived per release cycle.</li>
+<li>Expanded scenario suite is stable enough for routine CI execution
+without noisy flake rates.</li>
+<li>Release checklist and migration guidance published.</li>
+<li>Deployment runbooks validated by automated smoke checks.</li>
+<li>Docs runnable and validated in CI.</li>
+</ul>
+<h2 id="34-phase-3d-deferred-parity-features-realtime--composition">3.4
+Phase 3D: Deferred Parity Features (Realtime + Composition)</h2>
+<p>Deliverables:</p>
+<ul>
+<li>WebSocket support for app and controller workflows.</li>
+<li>Server-Sent Events support.</li>
+<li>App mounting/embedding composition model.</li>
+<li>Realtime channels/pubsub abstraction layered on websocket
+foundation.</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Websocket and SSE integration tests pass under concurrent load.</li>
+<li>Mounting/embedding contract tests pass.</li>
+<li>Realtime channel behavior is covered with deterministic fixture
+tests.</li>
+</ul>
+<h2 id="35-phase-3e-ecosystem-services-deferred-candidate-track">3.5
+Phase 3E: Ecosystem Services (Deferred Candidate Track)</h2>
+<p>Deliverables:</p>
+<ul>
+<li>Plugin-first background jobs abstraction.</li>
+<li>Caching abstraction with backend adapters.</li>
+<li>I18n localization framework.</li>
+<li>Optional mail and attachment abstractions.</li>
+</ul>
+<p>Acceptance:</p>
+<ul>
+<li>Service contracts validated through plugin compatibility
+suites.</li>
+<li>Baseline guides and examples published for each adopted service
+area.</li>
+</ul>
+<h2 id="4-principles">4. Principles</h2>
+<ol type="1">
+<li>Keep GNUstep/Foundation-first design.</li>
+<li>Prefer behavior parity over syntax mimicry.</li>
+<li>Avoid heavy abstractions as defaults.</li>
+<li>Prefer optional layers over mandatory complexity.</li>
+<li>Preserve default-first developer ergonomics.</li>
+</ol>
+<h2 id="5-sql-and-orm-positioning-in-phase-3">5. SQL and ORM Positioning
+in Phase 3</h2>
+<ul>
+<li><code>ALNPg</code> remains the default and most direct path.</li>
+<li><code>ALNSQLBuilder</code> is optional convenience, not required
+runtime coupling.</li>
+<li>A full ORM should be considered only if it materially improves
+ergonomics without violating performance and simplicity goals.</li>
+<li>GDL2 support is optional and adapter-based, not a core
+dependency.</li>
+</ul>
+<h2 id="6-parity-governance-in-phase-3">6. Parity Governance in Phase
+3</h2>
+<ul>
+<li>Continue quarterly Mojolicious parity deltas against the frozen
+baseline model in <code>docs/FEATURE_PARITY_MATRIX.md</code>.</li>
+<li>Every newly in-scope capability must include acceptance tests and
+migration notes when API behavior changes.</li>
+<li>Deferred items remain deferred until their prerequisites
+(observability, deployment reliability, and extension contracts) are
+complete.</li>
+</ul>
+</main></body>
+</html>
